@@ -1,4 +1,6 @@
-package com.davnig.units.model.core;
+package com.davnig.units.model;
+
+import com.davnig.units.model.core.Posting;
 
 import java.util.ArrayList;
 

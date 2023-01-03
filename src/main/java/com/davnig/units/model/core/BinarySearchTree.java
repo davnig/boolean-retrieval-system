@@ -1,8 +1,9 @@
 package com.davnig.units.model.core;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
-public class BinarySearchTree<T extends Comparable<T>> {
+public abstract class BinarySearchTree<T extends Comparable<T>> {
 
     class Node {
         T value;
@@ -18,6 +19,27 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
     public BinarySearchTree() {
         root = null;
+    }
+
+    /**
+     * Check for existence of an item that meets the given example.
+     *
+     * @param example the query object of type {@link T}
+     * @return {@code boolean}
+     */
+    public boolean existsByExample(T example) {
+        Optional<T> t = traverseAndSearch(root, example);
+        return t.isEmpty();
+    }
+
+    /**
+     * Search for an item that meets the given example.
+     *
+     * @param example the query object of type {@link T}
+     * @return the queried item or {@link Optional#empty()} if none is found
+     */
+    public Optional<T> findByExample(T example) {
+        return traverseAndSearch(root, example);
     }
 
     /**
@@ -45,6 +67,17 @@ public class BinarySearchTree<T extends Comparable<T>> {
      */
     public void delete(T item) {
         root = traverseAndDelete(root, item);
+    }
+
+    private Optional<T> traverseAndSearch(Node root, T example) {
+        if (root != null) {
+            traverseAndSearch(root.left, example);
+            if (example.compareTo(root.value) == 0) {
+                return Optional.of(root.value);
+            }
+            traverseAndSearch(root.right, example);
+        }
+        return Optional.empty();
     }
 
     private Node traverseAndInsert(Node root, T item) {
