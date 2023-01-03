@@ -1,4 +1,4 @@
-package com.davnig.units.model;
+package com.davnig.units.model.core;
 
 import java.util.HashMap;
 import java.util.stream.Stream;

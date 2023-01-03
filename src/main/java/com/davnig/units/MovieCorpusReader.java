@@ -1,7 +1,7 @@
 package com.davnig.units;
 
-import com.davnig.units.model.Corpus;
 import com.davnig.units.model.Movie;
+import com.davnig.units.model.core.Corpus;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

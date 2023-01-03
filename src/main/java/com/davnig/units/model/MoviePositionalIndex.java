@@ -1,5 +1,9 @@
 package com.davnig.units.model;
 
+import com.davnig.units.model.core.BinarySearchTree;
+import com.davnig.units.model.core.Corpus;
+import com.davnig.units.model.core.PositionalTerm;
+
 import java.util.Arrays;
 
 public class MoviePositionalIndex extends BSTPositionalIndex<Movie> {
@@ -17,7 +21,7 @@ public class MoviePositionalIndex extends BSTPositionalIndex<Movie> {
             Movie content = document.content();
             String movieDesc = content.description();
             if (movieDesc != null) {
-                movieDesc = movieDesc.replaceAll("[^\\w^\\s^-]", movieDesc);
+                movieDesc = movieDesc.replaceAll("[^\\w^\\s-]", "");
                 String[] tokens = movieDesc.split(" ");
                 System.out.println(Arrays.toString(tokens));
             }

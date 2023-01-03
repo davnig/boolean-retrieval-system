@@ -1,5 +1,9 @@
 package com.davnig.units.model;
 
+import com.davnig.units.model.core.BinarySearchTree;
+import com.davnig.units.model.core.Corpus;
+import com.davnig.units.model.core.PositionalTerm;
+
 public abstract class BSTPositionalIndex<D> {
 
     BinarySearchTree<PositionalTerm> tree;

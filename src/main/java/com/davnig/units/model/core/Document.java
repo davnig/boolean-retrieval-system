@@ -1,4 +1,4 @@
-package com.davnig.units.model;
+package com.davnig.units.model.core;
 
 public record Document<T>(
         int docID,

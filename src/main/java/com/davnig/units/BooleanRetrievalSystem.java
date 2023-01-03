@@ -1,8 +1,8 @@
 package com.davnig.units;
 
-import com.davnig.units.model.Corpus;
 import com.davnig.units.model.Movie;
 import com.davnig.units.model.MoviePositionalIndex;
+import com.davnig.units.model.core.Corpus;
 
 public class BooleanRetrievalSystem {
 
