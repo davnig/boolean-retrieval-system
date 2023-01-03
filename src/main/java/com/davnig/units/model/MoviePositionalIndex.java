@@ -20,11 +20,9 @@ public class MoviePositionalIndex extends BSTPositionalIndex<Movie> {
             int docID = document.docID();
             Movie content = document.content();
             String movieDesc = content.description();
-            if (movieDesc != null) {
-                movieDesc = movieDesc.replaceAll("[^\\w^\\s-]", "");
-                String[] tokens = movieDesc.split(" ");
-                System.out.println(Arrays.toString(tokens));
-            }
+            movieDesc = movieDesc.replaceAll("[^\\w^\\s-]", "");
+            String[] tokens = movieDesc.split(" ");
+            System.out.println(Arrays.toString(tokens));
         });
     }
 }

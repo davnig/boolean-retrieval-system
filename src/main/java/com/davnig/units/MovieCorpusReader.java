@@ -65,8 +65,10 @@ public class MovieCorpusReader implements CorpusReader<Movie> {
             Integer docID = entry.getKey();
             String title = entry.getValue();
             String description = descriptions.get(docID);
-            Movie movie = new Movie(title, description);
-            movieCorpus.addDocument(docID, movie);
+            if (description != null) {
+                Movie movie = new Movie(title, description);
+                movieCorpus.addDocument(docID, movie);
+            }
         }
         return movieCorpus;
     }
