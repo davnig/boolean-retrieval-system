@@ -1,8 +1,8 @@
 package com.davnig.units.model;
 
-public class Term {
+public class Term<T extends PostingList<? extends Posting>> {
 
-    private String word;
-    private PositionalPostingList postingList;
+    protected String word;
+    protected T postingList;
 
 }
