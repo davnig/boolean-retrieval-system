@@ -1,13 +1,15 @@
 package com.davnig.units.model.core;
 
+import java.util.function.Consumer;
+
 public class BinarySearchTree<T extends Comparable<T>> {
 
     class Node {
-        T key;
+        T value;
         Node left, right;
 
-        public Node(T item) {
-            key = item;
+        public Node(T value) {
+            this.value = value;
             left = right = null;
         }
     }
@@ -18,61 +20,64 @@ public class BinarySearchTree<T extends Comparable<T>> {
         root = null;
     }
 
-    public void insert(T key) {
-        root = insertKey(root, key);
+    /**
+     * Insert a new item in the tree.
+     *
+     * @param item the item of type {@link T} to be inserted
+     */
+    public void insert(T item) {
+        root = traverseAndInsert(root, item);
     }
 
     /**
-     * Insert a key in the tree
+     * Perform inorder traversal and consume all the values of the tree.
      *
-     * @param root the root of the tree
-     * @param key  the key to be inserted
-     * @return {@link Node}
+     * @param consumer the {@link Consumer} function to be applied on each item.
      */
-    public Node insertKey(Node root, T key) {
+    public void consume(Consumer<T> consumer) {
+        traverseAndConsume(root, consumer);
+    }
+
+    /**
+     * Delete the given item, if present.
+     *
+     * @param item the item of type {@link T} to be deleted
+     */
+    public void delete(T item) {
+        root = traverseAndDelete(root, item);
+    }
+
+    private Node traverseAndInsert(Node root, T item) {
         // Return a new node if the tree is empty
         if (root == null) {
-            root = new Node(key);
+            root = new Node(item);
             return root;
         }
         // Traverse to the right place and insert the node
-        if (key.compareTo(root.key) < 0)
-            root.left = insertKey(root.left, key);
-        else if (key.compareTo(root.key) > 0)
-            root.right = insertKey(root.right, key);
+        if (item.compareTo(root.value) < 0)
+            root.left = traverseAndInsert(root.left, item);
+        else if (item.compareTo(root.value) > 0)
+            root.right = traverseAndInsert(root.right, item);
         return root;
     }
 
-    public void inorder() {
-        inorderRec(root);
-    }
-
-    public void deleteKey(T key) {
-        root = deleteRec(root, key);
-    }
-
-    /**
-     * Inorder Traversal
-     *
-     * @param root
-     */
-    private void inorderRec(Node root) {
+    private void traverseAndConsume(Node root, Consumer<T> consumer) {
         if (root != null) {
-            inorderRec(root.left);
-            System.out.print(root.key + " -> ");
-            inorderRec(root.right);
+            traverseAndConsume(root.left, consumer);
+            consumer.accept(root.value);
+            traverseAndConsume(root.right, consumer);
         }
     }
 
-    private Node deleteRec(Node root, T key) {
+    private Node traverseAndDelete(Node root, T item) {
         // Return if the tree is empty
         if (root == null)
             return root;
         // Find the node to be deleted
-        if (key.compareTo(root.key) < 0)
-            root.left = deleteRec(root.left, key);
-        else if (key.compareTo(root.key) > 0)
-            root.right = deleteRec(root.right, key);
+        if (item.compareTo(root.value) < 0)
+            root.left = traverseAndDelete(root.left, item);
+        else if (item.compareTo(root.value) > 0)
+            root.right = traverseAndDelete(root.right, item);
         else {
             // If the node is with only one child or no child
             if (root.left == null)
@@ -81,23 +86,17 @@ public class BinarySearchTree<T extends Comparable<T>> {
                 return root.left;
             // If the node has two children
             // Place the inorder successor in position of the node to be deleted
-            root.key = minValue(root.right);
+            root.value = minValue(root.right);
             // Delete the inorder successor
-            root.right = deleteRec(root.right, root.key);
+            root.right = traverseAndDelete(root.right, root.value);
         }
         return root;
     }
 
-    /**
-     * Find the inorder successor
-     *
-     * @param root
-     * @return
-     */
     private T minValue(Node root) {
-        T minv = root.key;
+        T minv = root.value;
         while (root.left != null) {
-            minv = root.left.key;
+            minv = root.left.value;
             root = root.left;
         }
         return minv;
