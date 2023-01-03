@@ -4,6 +4,7 @@ import com.davnig.units.model.core.Corpus;
 import com.davnig.units.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public class MoviePositionalIndex extends PositionalIndex<Movie> {
 
@@ -19,8 +20,12 @@ public class MoviePositionalIndex extends PositionalIndex<Movie> {
             String movieDesc = StringUtils.normalize(movie.description());
             String[] tokens = StringUtils.tokenize(movieDesc);
             for (String token : tokens) {
-                if (existsByWord(token)) {
-                    System.out.println();
+                Optional<PositionalTerm> searchResult = findByWord(token);
+                if (searchResult.isEmpty()) {
+                    PositionalTerm term = new PositionalTerm(token);
+                    // todo: add new term
+                } else {
+                    // todo: add position to existing posting list
                 }
             }
             System.out.println(Arrays.toString(tokens));

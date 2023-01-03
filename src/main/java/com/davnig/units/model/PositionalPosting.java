@@ -8,4 +8,13 @@ public class PositionalPosting extends Posting {
 
     private ArrayList<Integer> positions;
 
+    public PositionalPosting(int docID) {
+        this.docID = docID;
+        this.positions = new ArrayList<>();
+    }
+
+    public void addPosition(int position) {
+        positions.add(position);
+    }
+
 }
