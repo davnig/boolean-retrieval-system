@@ -9,6 +9,7 @@ Write an IR system able to answer:
 
 - Boolean queries with AND, OR and NOT;
 - Wildcard and phrase queries;
+- Provide a way to save and load the entire index from disk, to avoid re-indexing when the program starts;
 - Some normalization or stemming can be performed;
 - Spelling correction can be implemented;
 - Evaluate the system on a set of test queries.
