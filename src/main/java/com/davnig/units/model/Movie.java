@@ -1,8 +1,7 @@
 package com.davnig.units.model;
 
-public class Movie {
-
-    private String name;
-    private String description;
-
+public record Movie(
+        String title,
+        String description
+) {
 }
