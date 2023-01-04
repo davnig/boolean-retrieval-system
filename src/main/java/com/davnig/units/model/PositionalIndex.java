@@ -1,23 +1,38 @@
 package com.davnig.units.model;
 
 import com.davnig.units.model.core.BinarySearchTree;
-import com.davnig.units.model.core.Corpus;
 
 import java.util.Optional;
 
 /**
- * An abstract class that models a {@link PositionalIndex} that manages documents of type {@link D}.
- *
- * @param <D> the type of the documents
+ * A positional index that manages {@link PositionalTerm}s using a Binary Search Tree.
  */
-public abstract class PositionalIndex<D> extends BinarySearchTree<PositionalTerm> {
+public class PositionalIndex extends BinarySearchTree<PositionalTerm> {
 
-    public PositionalIndex(Corpus<D> corpus) {
-        populateIndexFromCorpus(corpus);
+    /**
+     * Searches for an existing {@link PositionalTerm} with the given {@code word}. If present, adds a new posting to
+     * its posting list, avoiding any duplicate insertion. If not present, adds the new term.
+     *
+     * @param word     the word of the {@link PositionalTerm} to be added
+     * @param docID    the document ID of the {@link PositionalTerm} to be added
+     * @param position the position inside the document of the {@link PositionalTerm} to be added
+     */
+    public void addTerm(String word, int docID, int position) {
+        PositionalTerm newTerm = new PositionalTerm(word, docID, position);
+        Optional<PositionalTerm> queriedTerm = findByWord(newTerm.getWord());
+        if (queriedTerm.isEmpty()) {
+            insert(newTerm);
+            return;
+        }
+        queriedTerm.get().addPosting(docID, position);
     }
 
-    abstract void populateIndexFromCorpus(Corpus<D> corpus);
-
+    /**
+     * Searches for a {@link PositionalTerm} with the given word.
+     *
+     * @param word the word to be searched
+     * @return the queried term or {@link Optional#empty()} if not found
+     */
     public Optional<PositionalTerm> findByWord(String word) {
         PositionalTerm example = new PositionalTerm(word, null);
         return findByExample(example);

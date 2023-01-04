@@ -21,8 +21,16 @@ public class PositionalPostingList {
         postings.add(new PositionalPosting(docID));
     }
 
-    public void merge(PositionalPostingList postingList) {
-        // todo
+    public void addPosting(int docID, int position) {
+        postings.add(new PositionalPosting(docID, position));
+    }
+
+    public boolean isEmpty() {
+        return postings.isEmpty();
+    }
+
+    public int size() {
+        return postings.size();
     }
 
 }
