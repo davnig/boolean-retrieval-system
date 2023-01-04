@@ -1,13 +1,12 @@
 package com.davnig.units.model;
 
-import com.davnig.units.model.core.BinarySearchTree;
-
 import java.util.Optional;
+import java.util.TreeSet;
 
 /**
  * A positional index that manages {@link PositionalTerm}s using a Binary Search Tree.
  */
-public class PositionalIndex extends BinarySearchTree<PositionalTerm> {
+public class PositionalIndex extends TreeSet<PositionalTerm> {
 
     /**
      * Searches for an existing {@link PositionalTerm} with the given {@code word}. If present, adds a new posting to
@@ -21,7 +20,7 @@ public class PositionalIndex extends BinarySearchTree<PositionalTerm> {
         PositionalTerm newTerm = new PositionalTerm(word, docID, position);
         Optional<PositionalTerm> queriedTerm = findByWord(newTerm.getWord());
         if (queriedTerm.isEmpty()) {
-            insert(newTerm);
+            add(newTerm);
             return;
         }
         queriedTerm.get().addPosting(docID, position);
@@ -35,12 +34,12 @@ public class PositionalIndex extends BinarySearchTree<PositionalTerm> {
      */
     public Optional<PositionalTerm> findByWord(String word) {
         PositionalTerm example = new PositionalTerm(word, null);
-        return findByExample(example);
+        return Optional.ofNullable(ceiling(example));
     }
 
     public boolean existsByWord(String word) {
         PositionalTerm example = new PositionalTerm(word, null);
-        return existsByExample(example);
+        return contains(example);
     }
 
 }

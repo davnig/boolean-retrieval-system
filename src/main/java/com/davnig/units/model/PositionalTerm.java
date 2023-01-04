@@ -2,6 +2,7 @@ package com.davnig.units.model;
 
 import lombok.Getter;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Getter
@@ -45,6 +46,18 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
     @Override
     public int compareTo(PositionalTerm term) {
         return word.compareTo(term.word);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PositionalTerm that)) return false;
+        return Objects.equals(word, that.word);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(word);
     }
 
 }
