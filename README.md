@@ -19,11 +19,12 @@ Write an IR system able to answer:
 The [CMU Movie Summary Corpus](https://www.cs.cmu.edu/~ark/personas/) has been used for the scope of this project. It
 consists of 42,306 movie plot summaries extracted from Wikipedia and aligned metadata extracted from Freebase.
 
-## Todo
+## Roadmap
 
 - [x] Read corpus from a file
 - [x] Normalization
-- [ ] Indexing
+- [x] Indexing
 - [ ] Save/load the index on/from a file
+- [ ] Standard queries support
 - [ ] Wildcard queries support
 - [ ] Phrase queries support

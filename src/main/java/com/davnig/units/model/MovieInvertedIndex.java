@@ -10,6 +10,7 @@ public class MovieInvertedIndex {
     public MovieInvertedIndex(Corpus<Movie> corpus) {
         dictionary = new PositionalIndex();
         populateIndexFromCorpus(corpus);
+        saveIndexToFile();
     }
 
     void populateIndexFromCorpus(Corpus<Movie> corpus) {
@@ -24,6 +25,10 @@ public class MovieInvertedIndex {
             }
         });
         System.out.println(dictionary.first().getWord());
+    }
+
+    private void saveIndexToFile() {
+        // todo
     }
 
 
