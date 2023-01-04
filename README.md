@@ -14,6 +14,11 @@ Write an IR system able to answer:
 - Spelling correction can be implemented;
 - Evaluate the system on a set of test queries.
 
+## Corpus
+
+The [CMU Movie Summary Corpus](https://www.cs.cmu.edu/~ark/personas/) has been used for the scope of this project. It
+consists of 42,306 movie plot summaries extracted from Wikipedia and aligned metadata extracted from Freebase.
+
 ## Todo
 
 - [x] Read corpus from a file
