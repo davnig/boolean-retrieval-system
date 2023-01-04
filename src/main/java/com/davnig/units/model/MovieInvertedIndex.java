@@ -3,6 +3,10 @@ package com.davnig.units.model;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.util.StringUtils;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class MovieInvertedIndex {
 
     private final PositionalIndex dictionary;
@@ -28,7 +32,15 @@ public class MovieInvertedIndex {
     }
 
     private void saveIndexToFile() {
-        // todo
+        try (
+                BufferedWriter writer = new BufferedWriter(new FileWriter("generated/index.txt"));
+        ) {
+            for (PositionalTerm term : dictionary) {
+                writer.write(term.toString());
+            }
+        } catch (IOException ex) {
+            System.err.println("Exception: " + ex.getMessage());
+        }
     }
 
 

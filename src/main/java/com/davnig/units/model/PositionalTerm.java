@@ -3,7 +3,6 @@ package com.davnig.units.model;
 import lombok.Getter;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Getter
 public class PositionalTerm implements Comparable<PositionalTerm> {
@@ -27,20 +26,23 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
     }
 
     /**
-     * Searches for an existing {@link PositionalPosting} with the given {@code docID}. If present, add the given
-     * position, avoiding any duplicate insertion. If not present, creates and add a new posting to the list with the
-     * given parameters.
+     * Adds a new {@link PositionalPosting} with the given parameters avoiding duplicates.
      *
      * @param docID    the document ID
      * @param position the term position inside the document
      */
     public void addPosting(int docID, int position) {
-        Optional<PositionalPosting> queriedPosting = postingList.findPostingByDocID(docID);
-        if (queriedPosting.isEmpty()) {
-            postingList.addPosting(docID, position);
-            return;
-        }
-        queriedPosting.get().addPosition(position);
+        postingList.addPosting(docID, position);
+    }
+
+    /**
+     * Adds a new {@link PositionalPosting} with the given parameters avoiding duplicates.
+     *
+     * @param docID     the document ID
+     * @param positions the array of term positions
+     */
+    public void addPosting(int docID, int... positions) {
+        postingList.addPosting(docID, positions);
     }
 
     @Override
@@ -60,4 +62,8 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
         return Objects.hash(word);
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s:%s", word, postingList.toString());
+    }
 }

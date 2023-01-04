@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class MovieCorpusReader implements CorpusReader<Movie> {
 
-    private final int READING_LIMIT = 5000;
+    private final int READING_LIMIT = 500;
     private final String BASE_PATH = "MovieSummaries/";
     private final String TITLES_FILE_NAME = "movie.metadata.tsv";
     private final String DESC_FILE_NAME = "plot_summaries.txt";

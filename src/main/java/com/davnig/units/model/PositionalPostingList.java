@@ -2,6 +2,7 @@ package com.davnig.units.model;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PositionalPostingList {
 
@@ -17,12 +18,50 @@ public class PositionalPostingList {
                 .findFirst();
     }
 
+    /**
+     * Searches for a {@link PositionalPosting} in this list with the given {@code docID}.
+     * If not present, creates a new one with empty positions.
+     *
+     * @param docID the document ID
+     */
     public void addPosting(int docID) {
-        postings.add(new PositionalPosting(docID));
+        Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
+        if (queriedPosting.isEmpty()) {
+            postings.add(new PositionalPosting(docID));
+        }
     }
 
+    /**
+     * Searches for a {@link PositionalPosting} in this list with the given {@code docID}.
+     * If not present, creates a new one with the given parameters. If present, add
+     * the given {@code position} avoiding duplicates.
+     *
+     * @param docID    the document ID
+     * @param position the position to be added
+     */
     public void addPosting(int docID, int position) {
-        postings.add(new PositionalPosting(docID, position));
+        Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
+        if (queriedPosting.isEmpty()) {
+            postings.add(new PositionalPosting(docID, position));
+            return;
+        }
+        queriedPosting.get().addPosition(position);
+    }
+
+    /**
+     * Same as {@link PositionalPostingList#addPosting(int, int)} but with multiple positions,
+     * which are assumed to be already ordered.
+     *
+     * @param docID     the document ID
+     * @param positions the array of positions to be added
+     */
+    public void addPosting(int docID, int... positions) {
+        Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
+        if (queriedPosting.isEmpty()) {
+            postings.add(new PositionalPosting(docID, positions));
+            return;
+        }
+        queriedPosting.get().addAllPositions(positions);
     }
 
     public boolean isEmpty() {
@@ -33,4 +72,10 @@ public class PositionalPostingList {
         return postings.size();
     }
 
+    @Override
+    public String toString() {
+        return postings.stream()
+                .map(PositionalPosting::toString)
+                .collect(Collectors.joining(","));
+    }
 }
