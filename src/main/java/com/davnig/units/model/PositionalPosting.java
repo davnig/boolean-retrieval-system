@@ -28,4 +28,8 @@ public class PositionalPosting extends Posting {
         this.positions.addAll(positions);
     }
 
+    public int size() {
+        return positions.size();
+    }
+
 }
