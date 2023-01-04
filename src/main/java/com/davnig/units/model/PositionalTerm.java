@@ -1,19 +1,20 @@
 package com.davnig.units.model;
 
-import com.davnig.units.model.core.Term;
-
 import java.util.Optional;
 
-public class PositionalTerm extends Term<PositionalPostingList>
-        implements Comparable<PositionalTerm> {
+public class PositionalTerm implements Comparable<PositionalTerm> {
+
+    private String word;
+    private PositionalPostingList postingList;
 
     public PositionalTerm(String word) {
-        super(word);
+        this.word = word;
         this.postingList = new PositionalPostingList();
     }
 
     public PositionalTerm(String word, PositionalPostingList postingList) {
-        super(word, postingList);
+        this.word = word;
+        this.postingList = postingList;
     }
 
     @Override
@@ -29,6 +30,28 @@ public class PositionalTerm extends Term<PositionalPostingList>
             postingList.addPosting(docID);
             postingList.findPostingByDocID(docID).ifPresent(positionalPosting -> positionalPosting.addPosition(position));
         }
+    }
+
+    public void merge(PositionalTerm term) {
+        if (word.equals(term.word)) {
+            postingList.merge(term.getPostingList());
+        }
+    }
+
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+    public PositionalPostingList getPostingList() {
+        return postingList;
+    }
+
+    public void setPostingList(PositionalPostingList postingList) {
+        this.postingList = postingList;
     }
 
 }
