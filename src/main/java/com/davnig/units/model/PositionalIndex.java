@@ -1,5 +1,6 @@
 package com.davnig.units.model;
 
+import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -34,7 +35,11 @@ public class PositionalIndex extends TreeSet<PositionalTerm> {
      */
     public Optional<PositionalTerm> findByWord(String word) {
         PositionalTerm example = new PositionalTerm(word, null);
-        return Optional.ofNullable(ceiling(example));
+        NavigableSet<PositionalTerm> resultSet = subSet(example, true, example, true);
+        if (resultSet.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(resultSet.first());
     }
 
     public boolean existsByWord(String word) {

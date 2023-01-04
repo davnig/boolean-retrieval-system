@@ -3,8 +3,6 @@ package com.davnig.units.model;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.util.StringUtils;
 
-import java.util.Arrays;
-
 public class MovieInvertedIndex {
 
     private final PositionalIndex dictionary;
@@ -24,8 +22,8 @@ public class MovieInvertedIndex {
                 String token = tokens[position];
                 dictionary.addTerm(token, docID, position);
             }
-            System.out.println(Arrays.toString(tokens));
         });
+        System.out.println(dictionary.first().getWord());
     }
 
 

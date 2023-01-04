@@ -1,14 +1,15 @@
 package com.davnig.units.model.core;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 public class Corpus<D> {
 
-    private final HashMap<Integer, Document<D>> documents;
+    private final Map<Integer, Document<D>> documents;
 
     public Corpus() {
-        documents = new HashMap<>();
+        documents = new TreeMap<>();
     }
 
     public void addDocument(int docID, D content) {

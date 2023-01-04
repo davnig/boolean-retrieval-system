@@ -12,19 +12,20 @@ import java.util.Map;
 
 public class MovieCorpusReader implements CorpusReader<Movie> {
 
+    private final int READING_LIMIT = 5000;
     private final String BASE_PATH = "MovieSummaries/";
     private final String TITLES_FILE_NAME = "movie.metadata.tsv";
     private final String DESC_FILE_NAME = "plot_summaries.txt";
 
     @Override
     public Corpus<Movie> loadCorpus() {
-        HashMap<Integer, String> titles = loadTitles();
-        HashMap<Integer, String> descriptions = loadDescriptions();
+        Map<Integer, String> titles = loadTitles();
+        Map<Integer, String> descriptions = loadDescriptions();
         return createCorpus(titles, descriptions);
     }
 
-    private HashMap<Integer, String> loadTitles() {
-        HashMap<Integer, String> titles = new HashMap<>();
+    private Map<Integer, String> loadTitles() {
+        Map<Integer, String> titles = new HashMap<>();
         try (FileReader fileReader = new FileReader(BASE_PATH + TITLES_FILE_NAME)) {
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
@@ -41,8 +42,8 @@ public class MovieCorpusReader implements CorpusReader<Movie> {
         return titles;
     }
 
-    private HashMap<Integer, String> loadDescriptions() {
-        HashMap<Integer, String> descriptions = new HashMap<>();
+    private Map<Integer, String> loadDescriptions() {
+        Map<Integer, String> descriptions = new HashMap<>();
         try (FileReader fileReader = new FileReader(BASE_PATH + DESC_FILE_NAME)) {
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
@@ -59,10 +60,13 @@ public class MovieCorpusReader implements CorpusReader<Movie> {
         return descriptions;
     }
 
-    private Corpus<Movie> createCorpus(HashMap<Integer, String> titles, HashMap<Integer, String> descriptions) {
+    private Corpus<Movie> createCorpus(Map<Integer, String> titles, Map<Integer, String> descriptions) {
         Corpus<Movie> movieCorpus = new Corpus<>();
         int docCount = 0;
         for (Map.Entry<Integer, String> entry : titles.entrySet()) {
+            if (docCount == READING_LIMIT) {
+                return movieCorpus;
+            }
             Integer docID = entry.getKey();
             String title = entry.getValue();
             String description = descriptions.get(docID);
