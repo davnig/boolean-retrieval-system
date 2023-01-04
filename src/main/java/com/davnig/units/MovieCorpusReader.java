@@ -61,14 +61,16 @@ public class MovieCorpusReader implements CorpusReader<Movie> {
 
     private Corpus<Movie> createCorpus(HashMap<Integer, String> titles, HashMap<Integer, String> descriptions) {
         Corpus<Movie> movieCorpus = new Corpus<>();
+        int docCount = 0;
         for (Map.Entry<Integer, String> entry : titles.entrySet()) {
             Integer docID = entry.getKey();
             String title = entry.getValue();
             String description = descriptions.get(docID);
             if (description != null) {
                 Movie movie = new Movie(title, description);
-                movieCorpus.addDocument(docID, movie);
+                movieCorpus.addDocument(docCount, movie);
             }
+            docCount++;
         }
         return movieCorpus;
     }
