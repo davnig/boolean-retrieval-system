@@ -13,3 +13,12 @@ Write an IR system able to answer:
 - Some normalization or stemming can be performed;
 - Spelling correction can be implemented;
 - Evaluate the system on a set of test queries.
+
+## Todo
+
+- [x] Read corpus from a file
+- [x] Normalization
+- [ ] Indexing
+- [ ] Save/load the index on/from a file
+- [ ] Wildcard queries support
+- [ ] Phrase queries support
