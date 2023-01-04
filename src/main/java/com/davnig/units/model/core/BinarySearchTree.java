@@ -29,7 +29,7 @@ public abstract class BinarySearchTree<T extends Comparable<T>> {
      */
     public boolean existsByExample(T example) {
         Optional<T> t = traverseAndSearch(root, example);
-        return t.isEmpty();
+        return t.isPresent();
     }
 
     /**
