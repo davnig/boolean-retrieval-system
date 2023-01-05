@@ -2,7 +2,7 @@ package com.davnig.units.model;
 
 import com.davnig.units.CorpusReader;
 import com.davnig.units.MovieCorpusReader;
-import com.davnig.units.encoding.PositionalTermDecoder;
+import com.davnig.units.encoding.PositionalTermSerializer;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.util.StringUtils;
 
@@ -11,11 +11,13 @@ import java.util.Arrays;
 
 public class MovieInvertedIndex {
 
-    private PositionalIndex dictionary;
-    private final String INDEX_FILE_PATH = "generated/index-externalizable.txt";
+    private final PositionalIndex dictionary;
+    private final String INDEX_FILE_PATH = "generated/index.txt";
+    private final PositionalTermSerializer serializer;
 
     public MovieInvertedIndex() {
         dictionary = new PositionalIndex();
+        serializer = new PositionalTermSerializer();
         loadIndexFromFileOrPopulateFromCorpus();
     }
 
@@ -30,13 +32,12 @@ public class MovieInvertedIndex {
     }
 
     private void loadIndexFromFile(File file) {
-        PositionalTermDecoder decoder = new PositionalTermDecoder();
         try (
                 BufferedReader reader = new BufferedReader(new FileReader(file))
         ) {
             reader.lines()
-                    .map(decoder::decode)
-                    .forEach(term -> dictionary.add(term));
+                    .map(serializer::deserialize)
+                    .forEach(dictionary::add);
         } catch (IOException e) {
             System.err.println("An error occured while reading index file: " + e.getMessage());
             System.exit(1);
@@ -82,7 +83,7 @@ public class MovieInvertedIndex {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         ) {
             for (PositionalTerm term : dictionary) {
-                writer.write(term.toString());
+                writer.write(serializer.serialize(term));
                 writer.newLine();
             }
         } catch (IOException ex) {

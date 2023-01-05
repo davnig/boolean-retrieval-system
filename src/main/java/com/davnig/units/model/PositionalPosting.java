@@ -39,6 +39,11 @@ public class PositionalPosting extends Posting implements Externalizable {
         addAllPositions(positions);
     }
 
+    public PositionalPosting(int docID, List<Integer> positions) {
+        this(docID);
+        addAllPositions(positions);
+    }
+
     /**
      * Adds the given position in this {@link PositionalPosting} avoiding duplicates.
      *

@@ -24,6 +24,10 @@ public class PositionalPostingList implements Externalizable {
                 .findFirst();
     }
 
+    public void addPosting(PositionalPosting posting) {
+        addPosting(posting.getDocID(), posting.getPositions());
+    }
+
     /**
      * Searches for a {@link PositionalPosting} in this list with the given {@code docID}.
      * If not present, creates a new one with empty positions.
@@ -62,6 +66,22 @@ public class PositionalPostingList implements Externalizable {
      * @param positions the array of positions to be added
      */
     public void addPosting(int docID, int... positions) {
+        Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
+        if (queriedPosting.isEmpty()) {
+            postings.add(new PositionalPosting(docID, positions));
+            return;
+        }
+        queriedPosting.get().addAllPositions(positions);
+    }
+
+    /**
+     * Same as {@link PositionalPostingList#addPosting(int, int)} but with multiple positions,
+     * which are assumed to be already ordered.
+     *
+     * @param docID     the document ID
+     * @param positions the list of positions to be added
+     */
+    public void addPosting(int docID, List<Integer> positions) {
         Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
         if (queriedPosting.isEmpty()) {
             postings.add(new PositionalPosting(docID, positions));
