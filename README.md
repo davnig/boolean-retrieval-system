@@ -24,7 +24,8 @@ consists of 42,306 movie plot summaries extracted from Wikipedia and aligned met
 - [x] Read corpus from a file
 - [x] Normalization
 - [x] Indexing
-- [ ] Save/load the index on/from a file
+- [x] Save the index on a file
+- [ ] Load the index from a file
 - [ ] Standard queries support
 - [ ] Wildcard queries support
 - [ ] Phrase queries support
