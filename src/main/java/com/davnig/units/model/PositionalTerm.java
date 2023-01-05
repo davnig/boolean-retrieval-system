@@ -1,14 +1,20 @@
 package com.davnig.units.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Objects;
 
 @Getter
-public class PositionalTerm implements Comparable<PositionalTerm> {
+@NoArgsConstructor
+public class PositionalTerm implements Comparable<PositionalTerm>, Externalizable {
 
-    private final String word;
-    private final PositionalPostingList postingList;
+    private String word;
+    private PositionalPostingList postingList;
 
     public PositionalTerm(String word) {
         this.word = word;
@@ -66,4 +72,18 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
     public String toString() {
         return String.format("%s:%s", word, postingList.toString());
     }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeObject(word);
+        out.writeUTF(":");
+        out.writeObject(postingList);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        word = (String) in.readObject();
+        postingList = (PositionalPostingList) in.readObject();
+    }
+
 }

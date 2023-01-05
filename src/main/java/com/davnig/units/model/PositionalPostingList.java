@@ -1,12 +1,18 @@
 package com.davnig.units.model;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class PositionalPostingList {
+public class PositionalPostingList implements Externalizable {
 
-    private final ArrayList<PositionalPosting> postings;
+    private final List<PositionalPosting> postings;
 
     public PositionalPostingList() {
         postings = new ArrayList<>();
@@ -76,6 +82,21 @@ public class PositionalPostingList {
     public String toString() {
         return postings.stream()
                 .map(PositionalPosting::toString)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining(""));
     }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        for (PositionalPosting posting : postings) {
+            out.writeObject(posting);
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        Object object = in.readObject();
+        List<Object> objectList = Collections.singletonList(object);
+        objectList.forEach(obj -> postings.add((PositionalPosting) obj));
+    }
+
 }

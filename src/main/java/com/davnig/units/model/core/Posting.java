@@ -1,10 +1,12 @@
 package com.davnig.units.model.core;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Getter
+@NoArgsConstructor
 public abstract class Posting {
 
     protected int docID;
