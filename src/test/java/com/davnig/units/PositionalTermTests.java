@@ -10,7 +10,7 @@ public class PositionalTermTests {
 
     @Test
     void when_toString_should_correctlyEncode() {
-        String expectedEncoding = "gatto:1[1,2,3],2[1,2,3],3[1]";
+        String expectedEncoding = "gatto:1[1,2,3]2[1,2,3]3[1]";
         PositionalPostingList postingList = new PositionalPostingList();
         postingList.addPosting(1, 1, 2, 3);
         postingList.addPosting(2, 1, 2, 3);

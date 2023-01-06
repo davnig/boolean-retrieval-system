@@ -4,7 +4,7 @@ import com.davnig.units.model.PositionalPosting;
 import com.davnig.units.model.PositionalPostingList;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +21,7 @@ public class PositionalPostingListTests {
         Optional<PositionalPosting> queriedPosting = postingList.findPostingByDocID(1);
         assertTrue(queriedPosting.isPresent());
         assertEquals(2, queriedPosting.get().size());
-        ArrayList<Integer> positions = queriedPosting.get().getPositions();
+        List<Integer> positions = queriedPosting.get().getPositions();
         assertEquals(1, positions.get(0));
         assertEquals(2, positions.get(1));
     }
@@ -35,14 +35,14 @@ public class PositionalPostingListTests {
         Optional<PositionalPosting> queriedPosting = postingList.findPostingByDocID(1);
         assertTrue(queriedPosting.isPresent());
         assertEquals(2, queriedPosting.get().size());
-        ArrayList<Integer> positions = queriedPosting.get().getPositions();
+        List<Integer> positions = queriedPosting.get().getPositions();
         assertEquals(1, positions.get(0));
         assertEquals(2, positions.get(1));
     }
 
     @Test
     void given_postingList_when_toString_should_correctlyEncode() {
-        String expectedEncoding = "1[1,2,3],2[1,2,3],3[1]";
+        String expectedEncoding = "1[1,2,3]2[1,2,3]3[1]";
         PositionalPostingList postingList = new PositionalPostingList();
         postingList.addPosting(1, 1, 2, 3);
         postingList.addPosting(2, 1);
