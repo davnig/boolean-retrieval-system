@@ -34,7 +34,7 @@ public class MovieCorpusReader implements CorpusReader<Movie> {
             }
         } catch (IOException e) {
             if (e instanceof FileNotFoundException) {
-                System.err.println("File not found");
+                System.err.println("Corpus file not found");
                 System.exit(1);
             }
             throw new RuntimeException(e);
