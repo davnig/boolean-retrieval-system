@@ -2,8 +2,8 @@ package com.davnig.units.model;
 
 import com.davnig.units.CorpusReader;
 import com.davnig.units.MovieCorpusReader;
-import com.davnig.units.encoding.PositionalTermSerializer;
 import com.davnig.units.model.core.Corpus;
+import com.davnig.units.serializer.PositionalTermSerializer;
 import com.davnig.units.util.StringUtils;
 
 import java.io.*;

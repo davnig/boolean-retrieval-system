@@ -1,4 +1,4 @@
-package com.davnig.units.encoding;
+package com.davnig.units.serializer;
 
 public interface Serializer<T> {
 
