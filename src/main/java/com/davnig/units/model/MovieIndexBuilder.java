@@ -9,26 +9,40 @@ import com.davnig.units.util.StringUtils;
 import java.io.*;
 import java.util.Arrays;
 
-public class MovieInvertedIndex {
+public class MovieIndexBuilder {
 
-    private final PositionalIndex dictionary;
-    private final String INDEX_FILE_PATH = "data/index.txt";
+    private static MovieIndexBuilder instance;
+    private final String INDEX_FILE_PATH;
+    private final PositionalIndex index;
     private final PositionalTermSerializer serializer;
 
-    public MovieInvertedIndex() {
-        dictionary = new PositionalIndex();
+    private MovieIndexBuilder(String indexFilePath) {
+        INDEX_FILE_PATH = indexFilePath;
+        index = new PositionalIndex();
         serializer = new PositionalTermSerializer();
-        loadIndexFromFileOrPopulateFromCorpus();
     }
 
-    private void loadIndexFromFileOrPopulateFromCorpus() {
+    private static MovieIndexBuilder getInstance(String indexFilePath) {
+        if (instance == null) {
+            instance = new MovieIndexBuilder(indexFilePath);
+        }
+        return instance;
+    }
+
+    public static PositionalIndex build(String source) {
+        instance = MovieIndexBuilder.getInstance(source);
+        return instance.loadIndexFromFileOrPopulateFromCorpus();
+    }
+
+    private PositionalIndex loadIndexFromFileOrPopulateFromCorpus() {
         File file = new File(INDEX_FILE_PATH);
         if (file.exists()) {
             loadIndexFromFile(file);
-            return;
+            return index;
         }
         populateIndexFromCorpus();
         saveIndexToFile(file);
+        return index;
     }
 
     private void loadIndexFromFile(File file) {
@@ -38,7 +52,7 @@ public class MovieInvertedIndex {
         ) {
             reader.lines().parallel()
                     .map(serializer::deserialize)
-                    .forEach(dictionary::add);
+                    .forEach(index::add);
             System.out.println("Index loaded.");
         } catch (IOException e) {
             System.err.println("An error occured while reading index file: " + e.getMessage());
@@ -72,7 +86,7 @@ public class MovieInvertedIndex {
         for (int position = 0; position < tokens.length; position++) {
             String token = tokens[position];
             if (isTokenNotInBlackList(token)) {
-                dictionary.addTerm(token, docID, position);
+                index.addTerm(token, docID, position);
             }
         }
     }
@@ -87,7 +101,7 @@ public class MovieInvertedIndex {
         try (
                 BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         ) {
-            for (PositionalTerm term : dictionary) {
+            for (PositionalTerm term : index) {
                 writer.write(serializer.serialize(term));
                 writer.newLine();
             }
