@@ -26,6 +26,11 @@ public class PositionalTerm implements Comparable<PositionalTerm>, Externalizabl
         this.postingList.addPosting(docID, position);
     }
 
+    public PositionalTerm(String word, int docID, int... position) {
+        this(word);
+        this.postingList.addPosting(docID, position);
+    }
+
     public PositionalTerm(String word, PositionalPostingList postingList) {
         this.word = word;
         this.postingList = postingList;

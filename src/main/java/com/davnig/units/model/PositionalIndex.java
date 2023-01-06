@@ -15,12 +15,32 @@ import java.util.TreeSet;
 public class PositionalIndex extends TreeSet<PositionalTerm> implements Externalizable {
 
     /**
-     * Searches for an existing {@link PositionalTerm} with the given {@code word}. If present, adds a new posting to
-     * its posting list, avoiding any duplicate insertion. If not present, adds the new term.
+     * Searches for an existing {@link PositionalTerm} with the given {@code word}. If present, creates a new posting
+     * with the given {@code docID} and {@code positions}, and merges it in the corresponding posting list, avoiding
+     * duplicate insertion. If the term is not present, adds the new term.
      *
-     * @param word     the word of the {@link PositionalTerm} to be added
-     * @param docID    the document ID of the {@link PositionalTerm} to be added
-     * @param position the position inside the document of the {@link PositionalTerm} to be added
+     * @param word      the term's actual value
+     * @param docID     the document ID of the term to be added
+     * @param positions the positions where the term appears inside the document
+     */
+    public void addTerm(String word, int docID, int... positions) {
+        PositionalTerm newTerm = new PositionalTerm(word, docID, positions);
+        Optional<PositionalTerm> queriedTerm = findByWord(newTerm.getWord());
+        if (queriedTerm.isEmpty()) {
+            add(newTerm);
+            return;
+        }
+        queriedTerm.get().addPosting(docID, positions);
+    }
+
+    /**
+     * Searches for an existing {@link PositionalTerm} with the given {@code word}. If present, creates a new posting
+     * with the given {@code docID} and {@code position}, and merges it in the corresponding posting list, avoiding
+     * duplicate insertion. If not present, adds the new term.
+     *
+     * @param word     the term's actual value
+     * @param docID    the document ID of the term to be added
+     * @param position the position where the term appears inside the document
      */
     public void addTerm(String word, int docID, int position) {
         PositionalTerm newTerm = new PositionalTerm(word, docID, position);

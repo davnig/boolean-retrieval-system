@@ -1,5 +1,6 @@
 package com.davnig.units;
 
+import com.davnig.units.model.PositionalIndex;
 import com.davnig.units.model.PositionalPosting;
 import com.davnig.units.model.PositionalPostingList;
 import com.davnig.units.model.PositionalTerm;
@@ -9,6 +10,10 @@ import com.davnig.units.serializer.PositionalTermSerializer;
 import com.davnig.units.serializer.Serializer;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,9 +54,9 @@ public class SerializationTests {
     @Test
     void given_encodedPostingList_when_deserialize_should_correctlyDecode() {
         Serializer<PositionalTerm> serializer = new PositionalTermSerializer();
-        Example<PositionalTerm> example = getTermExample();
-        PositionalTerm result = serializer.deserialize(example.string);
-        assertEquals(example.object, result);
+        Example<PositionalTerm> termExample = getTermExample();
+        PositionalTerm result = serializer.deserialize(termExample.string);
+        assertEquals(termExample.object, result);
         assertEquals(3, result.getPostingList().size());
         assertTrue(result.getPostingList().findPostingByDocID(1).isPresent());
         assertTrue(result.getPostingList().findPostingByDocID(2).isPresent());
@@ -73,13 +78,58 @@ public class SerializationTests {
 
     @Test
     void given_encodedIndex_when_deserialize_should_correctlyDecode() {
-        fail();
+        Serializer<PositionalTerm> serializer = new PositionalTermSerializer();
+        Example<PositionalIndex> indexExample = getIndexExample();
+        Reader stringReader = new StringReader(indexExample.string);
+        PositionalIndex result = new PositionalIndex();
+        try (
+                BufferedReader reader = new BufferedReader(stringReader)
+        ) {
+            reader.lines()
+                    .map(serializer::deserialize)
+                    .forEach(result::add);
+        } catch (IOException e) {
+            fail();
+        }
+        result.forEach(System.out::println);
+        assertTrue(result.existsByWord("cat"));
+        assertTrue(result.existsByWord("dog"));
+        PositionalTerm expectedCat = indexExample.object.findByWord("cat").get();
+        PositionalTerm expectedDog = indexExample.object.findByWord("dog").get();
+        PositionalTerm catResult = result.findByWord("cat").get();
+        PositionalTerm dogResult = result.findByWord("dog").get();
+        assertEquals(expectedCat.getPostingList().size(), catResult.getPostingList().size());
+        assertEquals(expectedDog.getPostingList().size(), dogResult.getPostingList().size());
+        assertTrue(catResult.getPostingList().findPostingByDocID(2).isPresent());
+        assertTrue(dogResult.getPostingList().findPostingByDocID(23567).isPresent());
+        assertEquals(expectedCat.getPostingList().findPostingByDocID(2).get().getPositions().get(2),
+                catResult.getPostingList().findPostingByDocID(2).get().getPositions().get(2));
+        assertEquals(expectedDog.getPostingList().findPostingByDocID(23567).get().getPositions().get(2),
+                dogResult.getPostingList().findPostingByDocID(23567).get().getPositions().get(2));
+    }
+
+    private Example<PositionalIndex> getIndexExample() {
+        return new Example<>(
+                createIndex(),
+                "cat:1[1,2,3]2[1,2,3]3[1]\ndog:1341[111,222,3333]23567[1,24,35678]3789067[15346373]"
+        );
+    }
+
+    private PositionalIndex createIndex() {
+        PositionalIndex index = new PositionalIndex();
+        index.addTerm("cat", 1, 1, 2, 3);
+        index.addTerm("cat", 2, 1, 2, 3);
+        index.addTerm("cat", 3, 1);
+        index.addTerm("dog", 1341, 111, 222, 3333);
+        index.addTerm("dog", 23567, 1, 24, 35678);
+        index.addTerm("dog", 3789067, 15346373);
+        return index;
     }
 
     private Example<PositionalTerm> getTermExample() {
         return new Example<>(
-                createPositionalTerm(),
-                "gatto:1[1,2,3]2[1,2,3]3[1]"
+                createTerm(),
+                "cat:1[1,2,3]2[1,2,3]3[1]"
         );
     }
 
@@ -97,12 +147,12 @@ public class SerializationTests {
         );
     }
 
-    private PositionalTerm createPositionalTerm() {
+    private PositionalTerm createTerm() {
         PositionalPostingList postingList = new PositionalPostingList();
         postingList.addPosting(1, 1, 2, 3);
         postingList.addPosting(2, 1, 2, 3);
         postingList.addPosting(3, 1);
-        return new PositionalTerm("gatto", postingList);
+        return new PositionalTerm("cat", postingList);
     }
 
     private PositionalPostingList createPostingList() {
