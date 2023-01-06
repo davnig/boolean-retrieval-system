@@ -22,4 +22,8 @@ public class IRSystem {
         instance = IRSystem.getInstance(index);
     }
 
+    private void answerAND(String... words) {
+        // todo
+    }
+
 }
