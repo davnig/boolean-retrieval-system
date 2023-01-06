@@ -32,12 +32,14 @@ public class MovieInvertedIndex {
     }
 
     private void loadIndexFromFile(File file) {
+        System.out.println("Index found. Start loading in memory.");
         try (
                 BufferedReader reader = new BufferedReader(new FileReader(file))
         ) {
-            reader.lines()
+            reader.lines().parallel()
                     .map(serializer::deserialize)
                     .forEach(dictionary::add);
+            System.out.println("Index loaded.");
         } catch (IOException e) {
             System.err.println("An error occured while reading index file: " + e.getMessage());
             System.exit(1);
@@ -45,8 +47,10 @@ public class MovieInvertedIndex {
     }
 
     private void populateIndexFromCorpus() {
+        System.out.println("Index not found. Start populating from corpus.");
         Corpus<Movie> movieCorpus = loadMovieCorpus();
         populateIndex(movieCorpus);
+        System.out.println("Index populated.");
     }
 
     private Corpus<Movie> loadMovieCorpus() {
@@ -79,6 +83,7 @@ public class MovieInvertedIndex {
     }
 
     private void saveIndexToFile(File file) {
+        System.out.println("Saving new index to file.");
         try (
                 BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         ) {
@@ -86,10 +91,10 @@ public class MovieInvertedIndex {
                 writer.write(serializer.serialize(term));
                 writer.newLine();
             }
+            System.out.println("Done saving.");
         } catch (IOException ex) {
             System.err.println("Exception: " + ex.getMessage());
         }
     }
-
 
 }
