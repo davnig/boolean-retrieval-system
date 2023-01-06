@@ -79,7 +79,7 @@ public class MovieInvertedIndex {
 
     private boolean isTokenNotInBlackList(String token) {
         String[] blackList = new String[]{"", "-"};
-        return Arrays.stream(blackList).noneMatch(el -> el.equals(token));
+        return Arrays.stream(blackList).noneMatch(el -> el.equals(token) || token.startsWith("--"));
     }
 
     private void saveIndexToFile(File file) {
