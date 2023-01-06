@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class MovieInvertedIndex {
 
     private final PositionalIndex dictionary;
-    private final String INDEX_FILE_PATH = "generated/index.txt";
+    private final String INDEX_FILE_PATH = "data/index.txt";
     private final PositionalTermSerializer serializer;
 
     public MovieInvertedIndex() {
