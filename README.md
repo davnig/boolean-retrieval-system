@@ -26,7 +26,7 @@ from Wikipedia and aligned metadata extracted from Freebase.
 - [x] Indexing
 - [x] Save the index on a file
 - [x] Load the index from a file
-- [ ] `AND` queries support
+- [x] `AND` queries support
 - [ ] `OR` queries support
 - [ ] Wildcard queries support
 - [ ] Phrase queries support
