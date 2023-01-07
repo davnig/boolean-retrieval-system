@@ -1,5 +1,6 @@
 package com.davnig.units.model;
 
+import com.davnig.units.model.core.Posting;
 import com.davnig.units.util.ListUtils;
 
 import java.io.Externalizable;
@@ -22,6 +23,12 @@ public class PositionalPostingList implements Externalizable {
 
     public PositionalPostingList(List<PositionalPosting> postings) {
         this.postings = postings;
+    }
+
+    public List<Integer> getAllDocIDs() {
+        return postings.stream()
+                .map(Posting::getDocID)
+                .collect(Collectors.toList());
     }
 
     public Optional<PositionalPosting> findPostingByDocID(int docID) {

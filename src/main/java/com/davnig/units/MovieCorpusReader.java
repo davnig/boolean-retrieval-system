@@ -12,10 +12,21 @@ import java.util.Map;
 
 public class MovieCorpusReader implements CorpusReader<Movie> {
 
+    private static MovieCorpusReader instance;
     private final int READING_LIMIT = Integer.MAX_VALUE;
     private final String BASE_PATH = "MovieSummaries/";
     private final String TITLES_FILE_NAME = "movie.metadata.tsv";
     private final String DESC_FILE_NAME = "plot_summaries.txt";
+
+    private MovieCorpusReader() {
+    }
+
+    public static MovieCorpusReader getInstance() {
+        if (instance == null) {
+            instance = new MovieCorpusReader();
+        }
+        return instance;
+    }
 
     @Override
     public Corpus<Movie> loadCorpus() {

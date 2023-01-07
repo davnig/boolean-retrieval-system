@@ -68,7 +68,7 @@ public class MovieIndexBuilder {
     }
 
     private Corpus<Movie> loadMovieCorpus() {
-        CorpusReader<Movie> movieCorpusReader = new MovieCorpusReader();
+        CorpusReader<Movie> movieCorpusReader = MovieCorpusReader.getInstance();
         return movieCorpusReader.loadCorpus();
     }
 
