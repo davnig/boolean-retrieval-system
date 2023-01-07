@@ -22,10 +22,6 @@ public class IRSystem {
         this.corpus = null;
     }
 
-    private IRSystem(PositionalIndex index) {
-        this.index = index;
-    }
-
     private static IRSystem getInstance() {
         if (instance == null) {
             instance = new IRSystem();
@@ -38,19 +34,42 @@ public class IRSystem {
         getInstance().index = index;
     }
 
-    public static void answer(String query) {
-        IRSystem system = getInstance();
-        List<String> result = system.answerAND(query.split(" "));
+    public static void answerAND(String query) {
+        IRSystem searchEngine = getInstance();
+        String[] words = query.split(" ");
+        List<String> result = searchEngine.applyAND(words);
         System.out.println(result);
     }
 
-    private List<String> answerAND(String... words) {
+    public static void answerOR(String query) {
+        IRSystem searchEngine = getInstance();
+        String[] words = query.split(" ");
+        List<String> result = searchEngine.applyOR(words);
+        System.out.println(result);
+    }
+
+    private List<String> applyAND(String... words) {
         PositionalPostingList intersectedPostingList = Arrays.stream(words)
                 .map(index::findByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(PositionalTerm::getPostingList)
                 .reduce(PositionalPostingList::intersection)
+                .orElse(new PositionalPostingList());
+        return intersectedPostingList.getAllDocIDs().stream()
+                .map(id -> corpus.getDocumentByID(id))
+                .map(Document::content)
+                .map(Movie::title)
+                .toList();
+    }
+
+    private List<String> applyOR(String... words) {
+        PositionalPostingList intersectedPostingList = Arrays.stream(words)
+                .map(index::findByWord)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(PositionalTerm::getPostingList)
+                .reduce(PositionalPostingList::union)
                 .orElse(new PositionalPostingList());
         return intersectedPostingList.getAllDocIDs().stream()
                 .map(id -> corpus.getDocumentByID(id))

@@ -12,8 +12,8 @@ public class Main {
         Corpus<Movie> corpus = movieCorpusReader.loadCorpus();
         PositionalIndex index = MovieIndexBuilder.build("data/index.txt");
         IRSystem.init(corpus, index);
-        IRSystem.answer("yoda luke");
-        IRSystem.answer("yoda luke darth");
+        IRSystem.answerAND("yoda luke darth");
+        IRSystem.answerOR("yoda luke darth");
     }
 
 }
