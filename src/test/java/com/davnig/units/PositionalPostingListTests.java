@@ -40,5 +40,38 @@ public class PositionalPostingListTests {
         assertEquals(2, positions.get(1));
     }
 
+    @Test
+    void when_intersect_should_onlyIncludePostingsWithSameDocIDInBothLists() {
+        PositionalPostingList postingListA = new PositionalPostingList();
+        postingListA.addPosting(4, 1, 2);
+        postingListA.addPosting(25, 2);
+        postingListA.addPosting(31, 40, 57);
+        PositionalPostingList postingListB = new PositionalPostingList();
+        postingListB.addPosting(4, 1, 34);
+        postingListB.addPosting(26, 2);
+        postingListB.addPosting(30, 1);
+        postingListB.addPosting(31, 45, 58);
+        PositionalPostingList intersection = postingListA.intersection(postingListB);
+        assertEquals(2, intersection.size());
+        assertTrue(intersection.findPostingByDocID(4).isPresent());
+        assertTrue(intersection.findPostingByDocID(31).isPresent());
+    }
+
+    @Test
+    void when_union_should_includeAllPostingsFromBothListsMaintainingAscendingOrder() {
+        PositionalPostingList postingListA = new PositionalPostingList();
+        postingListA.addPosting(4, 1, 2);
+        postingListA.addPosting(25, 2);
+        postingListA.addPosting(31, 40, 57);
+        PositionalPostingList postingListB = new PositionalPostingList();
+        postingListB.addPosting(4, 1, 34);
+        postingListB.addPosting(26, 2);
+        postingListB.addPosting(30, 1);
+        postingListB.addPosting(31, 45, 58);
+        PositionalPostingList union = postingListA.union(postingListB);
+        assertEquals(5, union.size());
+        assertEquals("4[]25[]26[]30[]31[]", union.toString());
+    }
+
 
 }

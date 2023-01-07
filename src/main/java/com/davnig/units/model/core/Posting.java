@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
-public abstract class Posting {
+public class Posting implements Comparable<Posting> {
 
     protected int docID;
 
@@ -26,6 +26,11 @@ public abstract class Posting {
     @Override
     public int hashCode() {
         return Objects.hash(docID);
+    }
+
+    @Override
+    public int compareTo(Posting other) {
+        return Integer.compare(this.docID, other.docID);
     }
 
 }

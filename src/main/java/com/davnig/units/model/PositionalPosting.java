@@ -99,6 +99,7 @@ public class PositionalPosting extends Posting implements Externalizable {
         return stringBuilder.toString();
     }
 
+
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(docID);
@@ -122,4 +123,5 @@ public class PositionalPosting extends Posting implements Externalizable {
         objectList.forEach(obj -> positions.add((Integer) obj));
         in.skip(1);
     }
+
 }

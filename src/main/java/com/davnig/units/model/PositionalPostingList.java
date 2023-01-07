@@ -1,5 +1,7 @@
 package com.davnig.units.model;
 
+import com.davnig.units.util.ListUtils;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -16,6 +18,10 @@ public class PositionalPostingList implements Externalizable {
 
     public PositionalPostingList() {
         postings = new ArrayList<>();
+    }
+
+    public PositionalPostingList(List<PositionalPosting> postings) {
+        this.postings = postings;
     }
 
     public Optional<PositionalPosting> findPostingByDocID(int docID) {
@@ -88,6 +94,66 @@ public class PositionalPostingList implements Externalizable {
             return;
         }
         queriedPosting.get().addAllPositions(positions);
+    }
+
+    /**
+     * Performs an intersection between this {@link PositionalPostingList} and the one provided as argument.
+     *
+     * @param other the second posting list
+     * @return a {@link PositionalPostingList} representing the intersection
+     */
+    public PositionalPostingList intersection(PositionalPostingList other) {
+        List<PositionalPosting> intersection = new ArrayList<>();
+        for (int thisPointer = 0, otherPointer = 0;
+             ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings); ) {
+            PositionalPosting thisPosting = this.postings.get(thisPointer);
+            PositionalPosting otherPosting = other.postings.get(otherPointer);
+            if (thisPosting.equals(otherPosting)) {
+                intersection.add(new PositionalPosting(thisPosting.getDocID()));
+                thisPointer++;
+                otherPointer++;
+            } else if (thisPosting.compareTo(otherPosting) < 0) {
+                thisPointer++;
+            } else {
+                otherPointer++;
+            }
+        }
+        return new PositionalPostingList(intersection);
+    }
+
+    /**
+     * Performs a union between this {@link PositionalPostingList} and the one provided as argument.
+     *
+     * @param other the second posting list
+     * @return a {@link PositionalPostingList} representing the union
+     */
+    public PositionalPostingList union(PositionalPostingList other) {
+        List<PositionalPosting> union = new ArrayList<>();
+        int thisPointer = 0, otherPointer = 0;
+        while (ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings)) {
+            PositionalPosting thisPosting = this.postings.get(thisPointer);
+            PositionalPosting otherPosting = other.postings.get(otherPointer);
+            if (thisPosting.equals(otherPosting)) {
+                union.add(new PositionalPosting(thisPosting.getDocID()));
+                thisPointer++;
+                otherPointer++;
+            } else if (thisPosting.compareTo(otherPosting) < 0) {
+                union.add(new PositionalPosting(thisPosting.getDocID()));
+                thisPointer++;
+            } else {
+                union.add(new PositionalPosting(otherPosting.getDocID()));
+                otherPointer++;
+            }
+        }
+        unionAllRemaining(union, thisPointer, this.postings);
+        unionAllRemaining(union, otherPointer, other.postings);
+        return new PositionalPostingList(union);
+    }
+
+    private void unionAllRemaining(List<PositionalPosting> intermediateResult, int pointer, List<PositionalPosting> source) {
+        for (; pointer < source.size(); pointer++) {
+            intermediateResult.add(new PositionalPosting(source.get(pointer).getDocID()));
+        }
     }
 
     public boolean isEmpty() {
