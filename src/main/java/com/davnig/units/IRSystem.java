@@ -48,30 +48,48 @@ public class IRSystem {
         System.out.println(result);
     }
 
+    public static void answerPhrase(String query) {
+        IRSystem searchEngine = getInstance();
+        String[] words = query.split(" ");
+        List<String> result = searchEngine.findPhrase(words);
+        System.out.println(result);
+    }
+
     private List<String> applyAND(String... words) {
-        PositionalPostingList intersectedPostingList = Arrays.stream(words)
+        PositionalPostingList postingListIntersection = Arrays.stream(words)
                 .map(index::findByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(PositionalTerm::getPostingList)
-                .reduce(PositionalPostingList::intersection)
+                .reduce(PositionalPostingList::intersect)
                 .orElse(new PositionalPostingList());
-        return intersectedPostingList.getAllDocIDs().stream()
-                .map(id -> corpus.getDocumentByID(id))
-                .map(Document::content)
-                .map(Movie::title)
-                .toList();
+        return getMovieTitlesFromPostingList(postingListIntersection);
     }
 
     private List<String> applyOR(String... words) {
-        PositionalPostingList intersectedPostingList = Arrays.stream(words)
+        PositionalPostingList postingListUnion = Arrays.stream(words)
                 .map(index::findByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(PositionalTerm::getPostingList)
                 .reduce(PositionalPostingList::union)
                 .orElse(new PositionalPostingList());
-        return intersectedPostingList.getAllDocIDs().stream()
+        return getMovieTitlesFromPostingList(postingListUnion);
+    }
+
+    private List<String> findPhrase(String... words) {
+        PositionalPostingList postingListResult = Arrays.stream(words)
+                .map(index::findByWord)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(PositionalTerm::getPostingList)
+                .reduce(PositionalPostingList::intersectAndFillWithAdjacentPositions)
+                .orElse(new PositionalPostingList());
+        return getMovieTitlesFromPostingList(postingListResult);
+    }
+
+    private List<String> getMovieTitlesFromPostingList(PositionalPostingList postingList) {
+        return postingList.getAllDocIDs().stream()
                 .map(id -> corpus.getDocumentByID(id))
                 .map(Document::content)
                 .map(Movie::title)

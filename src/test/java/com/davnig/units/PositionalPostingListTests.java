@@ -51,7 +51,7 @@ public class PositionalPostingListTests {
         postingListB.addPosting(26, 2);
         postingListB.addPosting(30, 1);
         postingListB.addPosting(31, 45, 58);
-        PositionalPostingList intersection = postingListA.intersection(postingListB);
+        PositionalPostingList intersection = postingListA.intersect(postingListB);
         assertEquals(2, intersection.size());
         assertTrue(intersection.findPostingByDocID(4).isPresent());
         assertTrue(intersection.findPostingByDocID(31).isPresent());

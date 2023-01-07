@@ -1,6 +1,7 @@
 package com.davnig.units.model;
 
 import com.davnig.units.model.core.Posting;
+import com.davnig.units.util.ListUtils;
 import lombok.Getter;
 
 import java.io.Externalizable;
@@ -77,6 +78,25 @@ public class PositionalPosting extends Posting implements Externalizable {
         addAllPositions(arrayList);
     }
 
+    public List<Integer> findAdjacentPositions(PositionalPosting other) {
+        ArrayList<Integer> result = new ArrayList<>();
+        for (int thisPointer = 0, otherPointer = 0;
+             ListUtils.hasNext(thisPointer, this.positions) && ListUtils.hasNext(otherPointer, other.positions); ) {
+            Integer thisPosition = this.positions.get(thisPointer);
+            Integer otherPosition = other.positions.get(otherPointer);
+            if (thisPosition + 1 == otherPosition) {
+                result.add(thisPosition);
+                thisPointer++;
+                otherPointer++;
+            } else if (thisPosition < otherPosition) {
+                thisPointer++;
+            } else {
+                otherPointer++;
+            }
+        }
+        return result;
+    }
+
     /**
      * Returns the number of positions stored in this {@link PositionalPosting}.
      *
@@ -123,5 +143,4 @@ public class PositionalPosting extends Posting implements Externalizable {
         objectList.forEach(obj -> positions.add((Integer) obj));
         in.skip(1);
     }
-
 }

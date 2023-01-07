@@ -14,6 +14,7 @@ public class Main {
         IRSystem.init(corpus, index);
         IRSystem.answerAND("yoda luke darth");
         IRSystem.answerOR("yoda luke darth");
+        IRSystem.answerPhrase("darth vader");
     }
 
 }

@@ -109,7 +109,7 @@ public class PositionalPostingList implements Externalizable {
      * @param other the second posting list
      * @return a {@link PositionalPostingList} representing the intersection
      */
-    public PositionalPostingList intersection(PositionalPostingList other) {
+    public PositionalPostingList intersect(PositionalPostingList other) {
         List<PositionalPosting> intersection = new ArrayList<>();
         for (int thisPointer = 0, otherPointer = 0;
              ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings); ) {
@@ -117,6 +117,27 @@ public class PositionalPostingList implements Externalizable {
             PositionalPosting otherPosting = other.postings.get(otherPointer);
             if (thisPosting.equals(otherPosting)) {
                 intersection.add(new PositionalPosting(thisPosting.getDocID()));
+                thisPointer++;
+                otherPointer++;
+            } else if (thisPosting.compareTo(otherPosting) < 0) {
+                thisPointer++;
+            } else {
+                otherPointer++;
+            }
+        }
+        return new PositionalPostingList(intersection);
+    }
+
+    public PositionalPostingList intersectAndFillWithAdjacentPositions(PositionalPostingList other) {
+        List<PositionalPosting> intersection = new ArrayList<>();
+        for (int thisPointer = 0, otherPointer = 0;
+             ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings); ) {
+            PositionalPosting thisPosting = this.postings.get(thisPointer);
+            PositionalPosting otherPosting = other.postings.get(otherPointer);
+            if (thisPosting.equals(otherPosting)) {
+                PositionalPosting posting = new PositionalPosting(thisPosting.getDocID());
+                posting.addAllPositions(thisPosting.findAdjacentPositions(otherPosting));
+                intersection.add(posting);
                 thisPointer++;
                 otherPointer++;
             } else if (thisPosting.compareTo(otherPosting) < 0) {
