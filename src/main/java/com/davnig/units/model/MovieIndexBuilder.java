@@ -46,7 +46,7 @@ public class MovieIndexBuilder {
     }
 
     private void loadIndexFromFile(File file) {
-        System.out.println("Index found. Start loading in memory.");
+        System.out.println("Index found. Loading in memory...");
         try (
                 BufferedReader reader = new BufferedReader(new FileReader(file))
         ) {
@@ -61,7 +61,7 @@ public class MovieIndexBuilder {
     }
 
     private void populateIndexFromCorpus() {
-        System.out.println("Index not found. Start populating from corpus.");
+        System.out.println("Index not found. Populating from corpus...");
         Corpus<Movie> movieCorpus = loadMovieCorpus();
         populateIndex(movieCorpus);
         System.out.println("Index populated.");

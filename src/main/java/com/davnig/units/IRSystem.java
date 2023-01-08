@@ -11,6 +11,7 @@ import com.davnig.units.util.StringUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
 
@@ -32,9 +33,21 @@ public class IRSystem {
         return instance;
     }
 
-    public static void init(Corpus<Movie> corpus, PositionalIndex index) {
+    public static void start(Corpus<Movie> corpus, PositionalIndex index) {
         getInstance().corpus = corpus;
         getInstance().index = index;
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("Ready to search. Input your query: ");
+            String query = scanner.nextLine();
+            if (query.contains("\"")) {
+                answerPhrase(query);
+            } else if (query.contains("*")) {
+                answerWildcard(query);
+            } else {
+                answer(query);
+            }
+        }
     }
 
     /**
@@ -94,6 +107,9 @@ public class IRSystem {
         String[] words = normQuery.split(" ");
         List<String> result = searchEngine.findPhrase(words);
         System.out.println(result);
+    }
+
+    private static void answerWildcard(String query) {
     }
 
     private List<String> applyAND(String... words) {
