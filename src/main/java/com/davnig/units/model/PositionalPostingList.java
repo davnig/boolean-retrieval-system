@@ -123,6 +123,14 @@ public class PositionalPostingList {
         return new PositionalPostingList(intersection);
     }
 
+    /**
+     * Performs an intersection between this {@link PositionalPostingList} and the one provided as argument, finding
+     * the {@link PositionalPosting}s in common. Each of them is filled with the positions at which both terms are
+     * adjacent in that document.
+     *
+     * @param other the second posting list
+     * @return a {@link PositionalPostingList} representing the intersection
+     */
     public PositionalPostingList intersectAndFillWithAdjacentPositions(PositionalPostingList other) {
         List<PositionalPosting> intersection = new ArrayList<>();
         for (int thisPointer = 0, otherPointer = 0;
