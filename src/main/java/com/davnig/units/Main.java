@@ -1,7 +1,6 @@
 package com.davnig.units;
 
 import com.davnig.units.model.Movie;
-import com.davnig.units.model.MovieIndexBuilder;
 import com.davnig.units.model.PositionalIndex;
 import com.davnig.units.model.core.Corpus;
 

@@ -1,24 +1,27 @@
-package com.davnig.units.model;
+package com.davnig.units;
 
-import com.davnig.units.CorpusReader;
-import com.davnig.units.MovieCorpusReader;
+import com.davnig.units.model.Movie;
+import com.davnig.units.model.PositionalIndex;
+import com.davnig.units.model.PositionalTerm;
+import com.davnig.units.model.ThreeGramsPositionalIndex;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.serializer.PositionalTermSerializer;
-import com.davnig.units.util.StringUtils;
 
 import java.io.*;
 import java.util.Arrays;
+
+import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
 
 public class MovieIndexBuilder {
 
     private static MovieIndexBuilder instance;
     private final String INDEX_FILE_PATH;
-    private final PositionalIndex index;
+    private final ThreeGramsPositionalIndex index;
     private final PositionalTermSerializer serializer;
 
     private MovieIndexBuilder(String indexFilePath) {
         INDEX_FILE_PATH = indexFilePath;
-        index = new PositionalIndex();
+        index = new ThreeGramsPositionalIndex();
         serializer = new PositionalTermSerializer();
     }
 
@@ -76,13 +79,12 @@ public class MovieIndexBuilder {
         movieCorpus.getDocumentsAsStream().forEach(document -> {
             int docID = document.docID();
             Movie movie = document.content();
-            String movieDesc = StringUtils.normalize(movie.description());
-            String[] tokens = StringUtils.tokenize(movieDesc);
-            addNewTermForEachToken(docID, tokens);
+            String[] tokens = normalizeAndTokenize(movie.description(), " ");
+            addNewTermAndGramsForEachToken(docID, tokens);
         });
     }
 
-    private void addNewTermForEachToken(int docID, String[] tokens) {
+    private void addNewTermAndGramsForEachToken(int docID, String[] tokens) {
         for (int position = 0; position < tokens.length; position++) {
             String token = tokens[position];
             if (isTokenNotInBlackList(token)) {
