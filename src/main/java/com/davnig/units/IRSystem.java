@@ -6,6 +6,7 @@ import com.davnig.units.model.PositionalPostingList;
 import com.davnig.units.model.PositionalTerm;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.model.core.Document;
+import com.davnig.units.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,21 +37,24 @@ public class IRSystem {
 
     public static void answerAND(String query) {
         IRSystem searchEngine = getInstance();
-        String[] words = query.split(" ");
+        String normQuery = StringUtils.normalize(query);
+        String[] words = normQuery.split(" ");
         List<String> result = searchEngine.applyAND(words);
         System.out.println(result);
     }
 
     public static void answerOR(String query) {
         IRSystem searchEngine = getInstance();
-        String[] words = query.split(" ");
+        String normQuery = StringUtils.normalize(query);
+        String[] words = normQuery.split(" ");
         List<String> result = searchEngine.applyOR(words);
         System.out.println(result);
     }
 
     public static void answerPhrase(String query) {
         IRSystem searchEngine = getInstance();
-        String[] words = query.split(" ");
+        String normQuery = StringUtils.normalize(query);
+        String[] words = normQuery.split(" ");
         List<String> result = searchEngine.findPhrase(words);
         System.out.println(result);
     }
