@@ -110,6 +110,7 @@ public class IRSystem {
     }
 
     private static void answerWildcard(String query) {
+        // TODO
     }
 
     private List<String> applyAND(String... words) {

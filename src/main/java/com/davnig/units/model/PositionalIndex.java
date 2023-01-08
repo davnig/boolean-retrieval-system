@@ -1,10 +1,5 @@
 package com.davnig.units.model;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.TreeSet;
@@ -12,7 +7,7 @@ import java.util.TreeSet;
 /**
  * A positional index that manages {@link PositionalTerm}s using a Binary Search Tree.
  */
-public class PositionalIndex extends TreeSet<PositionalTerm> implements Externalizable {
+public class PositionalIndex extends TreeSet<PositionalTerm> {
 
     /**
      * Searches for an existing {@link PositionalTerm} with the given {@code word}. If present, creates a new posting
@@ -72,21 +67,4 @@ public class PositionalIndex extends TreeSet<PositionalTerm> implements External
         return contains(example);
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        Iterator<PositionalTerm> iterator = iterator();
-        while (iterator.hasNext()) {
-            PositionalTerm term = iterator.next();
-            out.writeObject(term);
-            out.writeUTF("\n");
-            iterator.next();
-        }
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        PositionalTerm term = (PositionalTerm) in.readObject();
-        String line = in.readLine();
-        // todo
-    }
 }

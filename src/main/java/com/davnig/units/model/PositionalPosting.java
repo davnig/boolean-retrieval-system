@@ -4,20 +4,13 @@ import com.davnig.units.model.core.Posting;
 import com.davnig.units.util.ListUtils;
 import lombok.Getter;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.davnig.units.util.ListUtils.isLastPositionInList;
-
 @Getter
-public class PositionalPosting extends Posting implements Externalizable {
+public class PositionalPosting extends Posting {
 
     private final List<Integer> positions;
 
@@ -119,28 +112,4 @@ public class PositionalPosting extends Posting implements Externalizable {
         return stringBuilder.toString();
     }
 
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(docID);
-        out.writeUTF("[");
-        int i = 0;
-        for (int position : positions) {
-            out.writeInt(position);
-            if (!isLastPositionInList(i, positions)) {
-                out.writeUTF(",");
-            }
-            i++;
-        }
-        out.writeUTF("]");
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        docID = in.readInt();
-        in.skip(1);
-        List<Object> objectList = Collections.singletonList(in.readObject());
-        objectList.forEach(obj -> positions.add((Integer) obj));
-        in.skip(1);
-    }
 }
