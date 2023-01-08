@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
+
 public class IRSystem {
 
     private static IRSystem instance;
@@ -35,14 +37,43 @@ public class IRSystem {
         getInstance().index = index;
     }
 
+    /**
+     * Parses the given query to an {@code AND}-query or an {@code OR}-query and performs the search of
+     * movie descriptions.
+     *
+     * @param query a list of terms separated by {@code AND} or {@code OR}
+     */
+    public static void answer(String query) {
+        IRSystem searchEngine = getInstance();
+        List<String> result;
+        if (query.split(" AND ").length > 1) {
+            String[] words = normalizeAndTokenize(query, " and ");
+            result = searchEngine.applyAND(words);
+        } else {
+            String[] words = normalizeAndTokenize(query, " or ");
+            result = searchEngine.applyOR(words);
+        }
+        System.out.println(result);
+    }
+
+    /**
+     * Searches for movie descriptions containing all the given terms and prints their titles.
+     *
+     * @param query a list of terms separated by whitespaces
+     */
     public static void answerAND(String query) {
         IRSystem searchEngine = getInstance();
-        String normQuery = StringUtils.normalize(query);
-        String[] words = normQuery.split(" ");
+        String[] words = normalizeAndTokenize(query, " ");
         List<String> result = searchEngine.applyAND(words);
         System.out.println(result);
     }
 
+    /**
+     * Searches for movie descriptions containing at least one of the given terms and
+     * prints their titles.
+     *
+     * @param query a list of terms separated by whitespaces
+     */
     public static void answerOR(String query) {
         IRSystem searchEngine = getInstance();
         String normQuery = StringUtils.normalize(query);
@@ -51,6 +82,12 @@ public class IRSystem {
         System.out.println(result);
     }
 
+    /**
+     * Searches for movie descriptions containing the given phrase and prints their titles.
+     * Only phrase queries with up to two terms are supported.
+     *
+     * @param query a list of terms separated by whitespaces
+     */
     public static void answerPhrase(String query) {
         IRSystem searchEngine = getInstance();
         String normQuery = StringUtils.normalize(query);

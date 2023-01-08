@@ -5,6 +5,10 @@ package com.davnig.units.util;
  */
 public class StringUtils {
 
+    public static String[] normalizeAndTokenize(String input, String regex) {
+        return tokenize(normalize(input), regex);
+    }
+
     /**
      * Remove punctuation and switch to lower case.
      *
@@ -24,6 +28,17 @@ public class StringUtils {
      */
     public static String[] tokenize(String input) {
         return input.split(" ");
+    }
+
+    /**
+     * Tokenize by applying the given regex.
+     *
+     * @param input {@link String}
+     * @param regex {@link String}
+     * @return array of tokens
+     */
+    public static String[] tokenize(String input, String regex) {
+        return input.split(regex);
     }
 
 }
