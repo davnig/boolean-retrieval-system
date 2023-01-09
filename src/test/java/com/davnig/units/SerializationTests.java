@@ -87,7 +87,7 @@ public class SerializationTests {
         ) {
             reader.lines()
                     .map(serializer::deserialize)
-                    .forEach(result::add);
+                    .forEach(result::addTerm);
         } catch (IOException e) {
             fail();
         }
@@ -117,12 +117,12 @@ public class SerializationTests {
 
     private PositionalIndex createIndex() {
         PositionalIndex index = new PositionalIndex();
-        index.addTerm("cat", 1, 1, 2, 3);
-        index.addTerm("cat", 2, 1, 2, 3);
-        index.addTerm("cat", 3, 1);
-        index.addTerm("dog", 1341, 111, 222, 3333);
-        index.addTerm("dog", 23567, 1, 24, 35678);
-        index.addTerm("dog", 3789067, 15346373);
+        index.addTermOccurrences("cat", 1, 1, 2, 3);
+        index.addTermOccurrences("cat", 2, 1, 2, 3);
+        index.addTermOccurrence("cat", 3, 1);
+        index.addTermOccurrences("dog", 1341, 111, 222, 3333);
+        index.addTermOccurrences("dog", 23567, 1, 24, 35678);
+        index.addTermOccurrence("dog", 3789067, 15346373);
         return index;
     }
 
@@ -149,19 +149,19 @@ public class SerializationTests {
 
     private PositionalTerm createTerm() {
         PositionalPostingList postingList = new PositionalPostingList();
-        postingList.addPosting(1, 1, 2, 3);
-        postingList.addPosting(2, 1, 2, 3);
-        postingList.addPosting(3, 1);
+        postingList.addOccurrencesInDoc(1, 1, 2, 3);
+        postingList.addOccurrencesInDoc(2, 1, 2, 3);
+        postingList.addOccurrenceInDoc(3, 1);
         return new PositionalTerm("cat", postingList);
     }
 
     private PositionalPostingList createPostingList() {
         PositionalPostingList postingList = new PositionalPostingList();
-        postingList.addPosting(1, 1, 2, 3);
-        postingList.addPosting(2, 1);
-        postingList.addPosting(2, 2);
-        postingList.addPosting(2, 3);
-        postingList.addPosting(3, 1);
+        postingList.addOccurrencesInDoc(1, 1, 2, 3);
+        postingList.addOccurrenceInDoc(2, 1);
+        postingList.addOccurrenceInDoc(2, 2);
+        postingList.addOccurrenceInDoc(2, 3);
+        postingList.addOccurrenceInDoc(3, 1);
         return postingList;
     }
 

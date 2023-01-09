@@ -15,8 +15,8 @@ public class PositionalPostingListTests {
     @Test
     void when_addPostingWithSameDocID_should_notCreateDuplicatePosting() {
         PositionalPostingList postingList = new PositionalPostingList();
-        postingList.addPosting(1, 1);
-        postingList.addPosting(1, 2);
+        postingList.addOccurrenceInDoc(1, 1);
+        postingList.addOccurrenceInDoc(1, 2);
         assertEquals(1, postingList.size());
         Optional<PositionalPosting> queriedPosting = postingList.findPostingByDocID(1);
         assertTrue(queriedPosting.isPresent());
@@ -29,8 +29,8 @@ public class PositionalPostingListTests {
     @Test
     void when_addPostingWithSameDocIDAndPosition_should_notCreateDuplicatePosition() {
         PositionalPostingList postingList = new PositionalPostingList();
-        postingList.addPosting(1, 1, 2);
-        postingList.addPosting(1, 2);
+        postingList.addOccurrencesInDoc(1, 1, 2);
+        postingList.addOccurrenceInDoc(1, 2);
         assertEquals(1, postingList.size());
         Optional<PositionalPosting> queriedPosting = postingList.findPostingByDocID(1);
         assertTrue(queriedPosting.isPresent());
@@ -43,14 +43,14 @@ public class PositionalPostingListTests {
     @Test
     void when_intersect_should_onlyIncludePostingsWithSameDocIDInBothLists() {
         PositionalPostingList postingListA = new PositionalPostingList();
-        postingListA.addPosting(4, 1, 2);
-        postingListA.addPosting(25, 2);
-        postingListA.addPosting(31, 40, 57);
+        postingListA.addOccurrencesInDoc(4, 1, 2);
+        postingListA.addOccurrenceInDoc(25, 2);
+        postingListA.addOccurrencesInDoc(31, 40, 57);
         PositionalPostingList postingListB = new PositionalPostingList();
-        postingListB.addPosting(4, 1, 34);
-        postingListB.addPosting(26, 2);
-        postingListB.addPosting(30, 1);
-        postingListB.addPosting(31, 45, 58);
+        postingListB.addOccurrencesInDoc(4, 1, 34);
+        postingListB.addOccurrenceInDoc(26, 2);
+        postingListB.addOccurrenceInDoc(30, 1);
+        postingListB.addOccurrencesInDoc(31, 45, 58);
         PositionalPostingList intersection = postingListA.intersect(postingListB);
         assertEquals(2, intersection.size());
         assertTrue(intersection.findPostingByDocID(4).isPresent());
@@ -60,14 +60,14 @@ public class PositionalPostingListTests {
     @Test
     void when_union_should_includeAllPostingsFromBothListsMaintainingAscendingOrder() {
         PositionalPostingList postingListA = new PositionalPostingList();
-        postingListA.addPosting(4, 1, 2);
-        postingListA.addPosting(25, 2);
-        postingListA.addPosting(31, 40, 57);
+        postingListA.addOccurrencesInDoc(4, 1, 2);
+        postingListA.addOccurrenceInDoc(25, 2);
+        postingListA.addOccurrencesInDoc(31, 40, 57);
         PositionalPostingList postingListB = new PositionalPostingList();
-        postingListB.addPosting(4, 1, 34);
-        postingListB.addPosting(26, 2);
-        postingListB.addPosting(30, 1);
-        postingListB.addPosting(31, 45, 58);
+        postingListB.addOccurrencesInDoc(4, 1, 34);
+        postingListB.addOccurrenceInDoc(26, 2);
+        postingListB.addOccurrenceInDoc(30, 1);
+        postingListB.addOccurrencesInDoc(31, 45, 58);
         PositionalPostingList union = postingListA.union(postingListB);
         assertEquals(5, union.size());
         assertEquals("4[]25[]26[]30[]31[]", union.toString());

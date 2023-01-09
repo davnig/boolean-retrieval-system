@@ -23,14 +23,14 @@ public class ThreeGramsPositionalIndex extends PositionalIndex {
     }
 
     @Override
-    public void addTerm(String word, int docID, int... positions) {
-        super.addTerm(word, docID, positions);
+    public void addTermOccurrences(String word, int docID, int... positions) {
+        super.addTermOccurrences(word, docID, positions);
         findByWord(word).ifPresent(this::extractAndAddThreeGrams);
     }
 
     @Override
-    public void addTerm(String word, int docID, int position) {
-        super.addTerm(word, docID, position);
+    public void addTermOccurrence(String word, int docID, int position) {
+        super.addTermOccurrence(word, docID, position);
         findByWord(word).ifPresent(this::extractAndAddThreeGrams);
     }
 

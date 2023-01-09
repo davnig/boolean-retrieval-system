@@ -18,17 +18,17 @@ public class PositionalIndexTests {
     @BeforeAll
     static void populateIndex() {
         index = new PositionalIndex();
-        index.addTerm("a", 0, 1);
-        index.addTerm("with", 0, 3);
-        index.addTerm("zoo", 3, 2);
-        index.addTerm("stars", 5, 2);
+        index.addTermOccurrence("a", 0, 1);
+        index.addTermOccurrence("with", 0, 3);
+        index.addTermOccurrence("zoo", 3, 2);
+        index.addTermOccurrence("stars", 5, 2);
     }
 
     @Test
     void given_emptyIndex_when_addTerm_should_createNewEntry() {
         final String testWord = "gatto";
         PositionalIndex index = new PositionalIndex();
-        index.addTerm(testWord, 1, 1);
+        index.addTermOccurrence(testWord, 1, 1);
         assertTrue(index.existsByWord(testWord));
         Optional<PositionalTerm> queriedTerm = index.findByWord(testWord);
         assertTrue(queriedTerm.isPresent());
@@ -38,8 +38,8 @@ public class PositionalIndexTests {
     @Test
     void given_indexWithSameWordInDifferentDoc_when_addTerm_should_createNewPosting() {
         final String testWord = "gatto";
-        index.addTerm(testWord, 1, 1);
-        index.addTerm(testWord, 2, 1);
+        index.addTermOccurrence(testWord, 1, 1);
+        index.addTermOccurrence(testWord, 2, 1);
         Optional<PositionalTerm> queriedTerm = index.findByWord(testWord);
         assertTrue(queriedTerm.isPresent());
         assertEquals(2, queriedTerm.get().getPostingList().size());
@@ -49,8 +49,8 @@ public class PositionalIndexTests {
     void given_indexWithSameWordInSameDocInDifferentPosition_when_addTerm_should_addNewPosition() {
         final int testDocID = 1;
         final String testWord = "gatto";
-        index.addTerm(testWord, testDocID, 1);
-        index.addTerm(testWord, testDocID, 3);
+        index.addTermOccurrence(testWord, testDocID, 1);
+        index.addTermOccurrence(testWord, testDocID, 3);
         Optional<PositionalTerm> queriedTerm = index.findByWord(testWord);
         assertTrue(queriedTerm.isPresent());
         assertEquals(testWord, queriedTerm.get().getWord());

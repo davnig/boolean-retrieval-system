@@ -20,46 +20,46 @@ public class PositionalIndex {
         return dictionary.iterator();
     }
 
-    public void add(PositionalTerm term) {
+    /**
+     * Adds the given term to the index. If a term with the same word already
+     * exists, then nothing is done.
+     *
+     * @param term a {@link PositionalTerm}
+     */
+    public void addTerm(PositionalTerm term) {
         dictionary.add(term);
     }
 
     /**
-     * Searches for an existing {@link PositionalTerm} with the given {@code word}. If present, creates a new posting
-     * with the given {@code docID} and {@code positions}, and merges it in the corresponding posting list, avoiding
-     * duplicate insertion. If the term is not present, adds the new term.
-     *
-     * @param word      the term's actual value
-     * @param docID     the document ID of the term to be added
-     * @param positions the positions where the term appears inside the document
-     */
-    public void addTerm(String word, int docID, int... positions) {
-        PositionalTerm newTerm = new PositionalTerm(word, docID, positions);
-        Optional<PositionalTerm> queriedTerm = findByWord(newTerm.getWord());
-        if (queriedTerm.isEmpty()) {
-            dictionary.add(newTerm);
-            return;
-        }
-        queriedTerm.get().addPosting(docID, positions);
-    }
-
-    /**
-     * Searches for an existing {@link PositionalTerm} with the given {@code word}. If present, creates a new posting
-     * with the given {@code docID} and {@code position}, and merges it in the corresponding posting list, avoiding
-     * duplicate insertion. If not present, adds the new term.
+     * Searches for an existing term in the index with the same {@code word} provided as parameter. If present,
+     * traverses the associated posting list looking for a posting that matches the provided {@code docID}.
+     * If found, adds the given {@code position}, avoiding duplicates. Otherwise, create a new posting.
+     * If the term is not present in the index, adds the new term.
      *
      * @param word     the term's actual value
      * @param docID    the document ID of the term to be added
      * @param position the position where the term appears inside the document
      */
-    public void addTerm(String word, int docID, int position) {
+    public void addTermOccurrence(String word, int docID, int position) {
         PositionalTerm newTerm = new PositionalTerm(word, docID, position);
-        Optional<PositionalTerm> queriedTerm = findByWord(newTerm.getWord());
-        if (queriedTerm.isEmpty()) {
-            dictionary.add(newTerm);
-            return;
-        }
-        queriedTerm.get().addPosting(docID, position);
+        dictionary.add(newTerm);
+        findByWord(newTerm.getWord()).ifPresent(term -> term.addOccurrenceInDoc(docID, position));
+    }
+
+    /**
+     * Searches for an existing term in the index with the same {@code word} provided as parameter. If present,
+     * traverses the associated posting list looking for a posting that matches the provided {@code docID}.
+     * If found, adds the given {@code positions}, avoiding duplicates. Otherwise, create a new posting.
+     * If the term is not present in the index, adds the new term.
+     *
+     * @param word      the term's actual value
+     * @param docID     the document ID of the term to be added
+     * @param positions the positions where the term appears inside the document
+     */
+    public void addTermOccurrences(String word, int docID, int... positions) {
+        PositionalTerm newTerm = new PositionalTerm(word, docID, positions);
+        dictionary.add(newTerm);
+        findByWord(newTerm.getWord()).ifPresent(term -> term.addOccurrencesInDoc(docID, positions));
     }
 
     /**

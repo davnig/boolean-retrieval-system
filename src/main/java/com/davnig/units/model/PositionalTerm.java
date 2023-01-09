@@ -19,12 +19,12 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
 
     public PositionalTerm(String word, int docID, int position) {
         this(word);
-        this.postingList.addPosting(docID, position);
+        this.postingList.addOccurrenceInDoc(docID, position);
     }
 
     public PositionalTerm(String word, int docID, int... position) {
         this(word);
-        this.postingList.addPosting(docID, position);
+        this.postingList.addOccurrencesInDoc(docID, position);
     }
 
     public PositionalTerm(String word, PositionalPostingList postingList) {
@@ -33,23 +33,23 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
     }
 
     /**
-     * Adds a new {@link PositionalPosting} with the given parameters avoiding duplicates.
+     * Adds a new occurrence of this term in the associated posting list.
      *
-     * @param docID    the document ID
-     * @param position the term position inside the document
+     * @param docID    the ID of the document where the term appears
+     * @param position the position of the term inside the document
      */
-    public void addPosting(int docID, int position) {
-        postingList.addPosting(docID, position);
+    public void addOccurrenceInDoc(int docID, int position) {
+        postingList.addOccurrenceInDoc(docID, position);
     }
 
     /**
-     * Adds a new {@link PositionalPosting} with the given parameters avoiding duplicates.
+     * Adds multiple occurrences of this term in the associated posting list.
      *
-     * @param docID     the document ID
-     * @param positions the array of term positions
+     * @param docID     the ID of the document where the term appears
+     * @param positions the positions of the term inside the document
      */
-    public void addPosting(int docID, int... positions) {
-        postingList.addPosting(docID, positions);
+    public void addOccurrencesInDoc(int docID, int[] positions) {
+        postingList.addOccurrencesInDoc(docID, positions);
     }
 
     @Override
@@ -73,5 +73,4 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
     public String toString() {
         return String.format("%s:%s", word, postingList.toString());
     }
-
 }

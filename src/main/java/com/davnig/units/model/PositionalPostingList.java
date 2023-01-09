@@ -32,21 +32,14 @@ public class PositionalPostingList {
                 .findFirst();
     }
 
-    public void addPosting(PositionalPosting posting) {
-        addPosting(posting.getDocID(), posting.getPositions());
-    }
-
     /**
-     * Searches for a {@link PositionalPosting} in this list with the given {@code docID}.
-     * If not present, creates a new one with empty positions.
+     * Adds the given posting to this list. This method assumes the absence of any
+     * other posting with the same doc ID.
      *
-     * @param docID the document ID
+     * @param posting a {@link PositionalPosting}
      */
-    public void addPosting(int docID) {
-        Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
-        if (queriedPosting.isEmpty()) {
-            postings.add(new PositionalPosting(docID));
-        }
+    public void addPosting(PositionalPosting posting) {
+        postings.add(posting);
     }
 
     /**
@@ -57,7 +50,7 @@ public class PositionalPostingList {
      * @param docID    the document ID
      * @param position the position to be added
      */
-    public void addPosting(int docID, int position) {
+    public void addOccurrenceInDoc(int docID, int position) {
         Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
         if (queriedPosting.isEmpty()) {
             postings.add(new PositionalPosting(docID, position));
@@ -67,35 +60,35 @@ public class PositionalPostingList {
     }
 
     /**
-     * Same as {@link PositionalPostingList#addPosting(int, int)} but with multiple positions,
+     * Same as {@link PositionalPostingList#addOccurrenceInDoc(int, int)} but with multiple positions,
      * which are assumed to be already ordered.
      *
      * @param docID     the document ID
      * @param positions the array of positions to be added
      */
-    public void addPosting(int docID, int... positions) {
+    public void addOccurrencesInDoc(int docID, int... positions) {
         Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
         if (queriedPosting.isEmpty()) {
             postings.add(new PositionalPosting(docID, positions));
             return;
         }
-        queriedPosting.get().addAllPositions(positions);
+        queriedPosting.get().addPositions(positions);
     }
 
     /**
-     * Same as {@link PositionalPostingList#addPosting(int, int)} but with multiple positions,
+     * Same as {@link PositionalPostingList#addOccurrenceInDoc(int, int)} but with multiple positions,
      * which are assumed to be already ordered.
      *
      * @param docID     the document ID
      * @param positions the list of positions to be added
      */
-    public void addPosting(int docID, List<Integer> positions) {
+    public void addOccurrencesInDoc(int docID, List<Integer> positions) {
         Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
         if (queriedPosting.isEmpty()) {
             postings.add(new PositionalPosting(docID, positions));
             return;
         }
-        queriedPosting.get().addAllPositions(positions);
+        queriedPosting.get().addPositions(positions);
     }
 
     /**
@@ -139,7 +132,7 @@ public class PositionalPostingList {
             PositionalPosting otherPosting = other.postings.get(otherPointer);
             if (thisPosting.equals(otherPosting)) {
                 PositionalPosting posting = new PositionalPosting(thisPosting.getDocID());
-                posting.addAllPositions(thisPosting.findAdjacentPositions(otherPosting));
+                posting.addPositions(thisPosting.findAdjacentPositions(otherPosting));
                 intersection.add(posting);
                 thisPointer++;
                 otherPointer++;

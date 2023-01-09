@@ -56,7 +56,7 @@ public class MovieIndexBuilder {
         ) {
             reader.lines().parallel()
                     .map(serializer::deserialize)
-                    .forEach(index::add);
+                    .forEach(index::addTerm);
             System.out.println("Index loaded.");
         } catch (IOException e) {
             System.err.println("An error occured while reading index file: " + e.getMessage());
@@ -81,15 +81,15 @@ public class MovieIndexBuilder {
             int docID = document.docID();
             Movie movie = document.content();
             String[] tokens = normalizeAndTokenize(movie.description(), " ");
-            addNewTermAndGramsForEachToken(docID, tokens);
+            addTermOccurrenceAndGramsForEachToken(docID, tokens);
         });
     }
 
-    private void addNewTermAndGramsForEachToken(int docID, String[] tokens) {
+    private void addTermOccurrenceAndGramsForEachToken(int docID, String[] tokens) {
         for (int position = 0; position < tokens.length; position++) {
             String token = tokens[position];
             if (isTokenNotInBlackList(token)) {
-                index.addTerm(token, docID, position);
+                index.addTermOccurrence(token, docID, position);
             }
         }
     }

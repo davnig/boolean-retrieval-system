@@ -30,12 +30,12 @@ public class PositionalPosting extends Posting {
 
     public PositionalPosting(int docID, int... positions) {
         this(docID);
-        addAllPositions(positions);
+        addPositions(positions);
     }
 
     public PositionalPosting(int docID, List<Integer> positions) {
         this(docID);
-        addAllPositions(positions);
+        addPositions(positions);
     }
 
     /**
@@ -55,7 +55,7 @@ public class PositionalPosting extends Posting {
      *
      * @param positions the list of ordered positions to be added
      */
-    public void addAllPositions(List<Integer> positions) {
+    public void addPositions(List<Integer> positions) {
         positions.forEach(this::addPosition);
     }
 
@@ -65,10 +65,10 @@ public class PositionalPosting extends Posting {
      *
      * @param positions the array of ordered positions to be added
      */
-    public void addAllPositions(int... positions) {
+    public void addPositions(int... positions) {
         ArrayList<Integer> arrayList = new ArrayList<>();
         Arrays.stream(positions).boxed().forEach(arrayList::add);
-        addAllPositions(arrayList);
+        addPositions(arrayList);
     }
 
     public List<Integer> findAdjacentPositions(PositionalPosting other) {
