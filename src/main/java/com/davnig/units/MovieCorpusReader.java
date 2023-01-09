@@ -13,7 +13,6 @@ import java.util.Map;
 public class MovieCorpusReader implements CorpusReader<Movie> {
 
     private static MovieCorpusReader instance;
-    private final int READING_LIMIT = Integer.MAX_VALUE;
     private final String BASE_PATH = "MovieSummaries/";
     private final String TITLES_FILE_NAME = "movie.metadata.tsv";
     private final String DESC_FILE_NAME = "plot_summaries.txt";
@@ -75,9 +74,6 @@ public class MovieCorpusReader implements CorpusReader<Movie> {
         Corpus<Movie> movieCorpus = new Corpus<>();
         int docCount = 0;
         for (Map.Entry<Integer, String> entry : titles.entrySet()) {
-            if (docCount == READING_LIMIT) {
-                return movieCorpus;
-            }
             Integer docID = entry.getKey();
             String title = entry.getValue();
             String description = descriptions.get(docID);

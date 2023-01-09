@@ -12,11 +12,17 @@ public class ThreeGramsPositionalIndex extends PositionalIndex {
     private final Map<String, Set<PositionalTerm>> threeGramsIndex;
 
     public ThreeGramsPositionalIndex() {
-        threeGramsIndex = new HashMap<>();
+        threeGramsIndex = new Hashtable<>();
     }
 
     public Set<PositionalTerm> findByGram(String gram) {
         return threeGramsIndex.get(gram);
+    }
+
+    @Override
+    public void addTerm(PositionalTerm term) {
+        super.addTerm(term);
+        extractAndAddThreeGrams(term);
     }
 
     public void addTermOccurrencesAndGrams(String word, int docID, int... positions) {

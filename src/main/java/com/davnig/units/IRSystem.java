@@ -95,6 +95,11 @@ public class IRSystem {
         System.out.println(result);
     }
 
+    public static void answerNOT(String query) {
+        IRSystem searchEngine = getInstance();
+        String normQuery = StringUtils.normalize(query);
+    }
+
     /**
      * Searches for movie descriptions containing the given phrase and prints their titles.
      * Only phrase queries with up to two terms are supported.

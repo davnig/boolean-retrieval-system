@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class MovieIndexBuilder {
 
@@ -60,9 +61,9 @@ public class MovieIndexBuilder {
                     .forEach(index::addTerm);
             long end = System.nanoTime();
             long execution = end - start;
-            System.out.println("Index loaded. Execution time: " + execution);
+            System.out.printf("Index loaded. Execution time: %d sec%n", NANOSECONDS.toSeconds(execution));
         } catch (IOException e) {
-            System.err.println("An error occured while reading index file: " + e.getMessage());
+            System.err.println("An error occurred while reading index file: " + e.getMessage());
             System.exit(1);
         }
     }
