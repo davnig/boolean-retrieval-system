@@ -89,7 +89,7 @@ public class MovieIndexBuilder {
         for (int position = 0; position < tokens.length; position++) {
             String token = tokens[position];
             if (isTokenNotInBlackList(token)) {
-                index.addTermOccurrence(token, docID, position);
+                index.addTermOccurrenceAndGrams(token, docID, position);
             }
         }
     }

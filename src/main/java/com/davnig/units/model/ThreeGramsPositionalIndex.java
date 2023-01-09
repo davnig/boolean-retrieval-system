@@ -1,9 +1,6 @@
 package com.davnig.units.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,16 +19,14 @@ public class ThreeGramsPositionalIndex extends PositionalIndex {
         return threeGramsIndex.get(gram);
     }
 
-    @Override
-    public void addTermOccurrences(String word, int docID, int... positions) {
-        super.addTermOccurrences(word, docID, positions);
-        findByWord(word).ifPresent(this::extractAndAddThreeGrams);
+    public void addTermOccurrencesAndGrams(String word, int docID, int... positions) {
+        Optional<PositionalTerm> termOpt = super.addTermOccurrences(word, docID, positions);
+        termOpt.ifPresent(this::extractAndAddThreeGrams);
     }
 
-    @Override
-    public void addTermOccurrence(String word, int docID, int position) {
-        super.addTermOccurrence(word, docID, position);
-        findByWord(word).ifPresent(this::extractAndAddThreeGrams);
+    public void addTermOccurrenceAndGrams(String word, int docID, int position) {
+        Optional<PositionalTerm> termOpt = super.addTermOccurrence(word, docID, position);
+        termOpt.ifPresent(this::extractAndAddThreeGrams);
     }
 
     public void extractAndAddThreeGrams(PositionalTerm term) {

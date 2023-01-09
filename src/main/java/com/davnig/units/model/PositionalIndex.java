@@ -39,11 +39,14 @@ public class PositionalIndex {
      * @param word     the term's actual value
      * @param docID    the document ID of the term to be added
      * @param position the position where the term appears inside the document
+     * @return
      */
-    public void addTermOccurrence(String word, int docID, int position) {
+    public Optional<PositionalTerm> addTermOccurrence(String word, int docID, int position) {
         PositionalTerm newTerm = new PositionalTerm(word, docID, position);
         dictionary.add(newTerm);
-        findByWord(newTerm.getWord()).ifPresent(term -> term.addOccurrenceInDoc(docID, position));
+        Optional<PositionalTerm> queriedTerm = findByWord(newTerm.getWord());
+        queriedTerm.ifPresent(term -> term.addOccurrenceInDoc(docID, position));
+        return queriedTerm;
     }
 
     /**
@@ -55,11 +58,14 @@ public class PositionalIndex {
      * @param word      the term's actual value
      * @param docID     the document ID of the term to be added
      * @param positions the positions where the term appears inside the document
+     * @return
      */
-    public void addTermOccurrences(String word, int docID, int... positions) {
+    public Optional<PositionalTerm> addTermOccurrences(String word, int docID, int... positions) {
         PositionalTerm newTerm = new PositionalTerm(word, docID, positions);
         dictionary.add(newTerm);
-        findByWord(newTerm.getWord()).ifPresent(term -> term.addOccurrencesInDoc(docID, positions));
+        Optional<PositionalTerm> queriedTerm = findByWord(newTerm.getWord());
+        queriedTerm.ifPresent(positionalTerm -> positionalTerm.addOccurrencesInDoc(docID, positions));
+        return queriedTerm;
     }
 
     /**
