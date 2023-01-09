@@ -1,5 +1,6 @@
 package com.davnig.units.model;
 
+import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.TreeSet;
@@ -7,7 +8,21 @@ import java.util.TreeSet;
 /**
  * A positional index that manages {@link PositionalTerm}s using a Binary Search Tree.
  */
-public class PositionalIndex extends TreeSet<PositionalTerm> {
+public class PositionalIndex {
+
+    protected final TreeSet<PositionalTerm> dictionary;
+
+    public PositionalIndex() {
+        dictionary = new TreeSet<>();
+    }
+
+    public Iterator<PositionalTerm> positionalIndexIterator() {
+        return dictionary.iterator();
+    }
+
+    public void add(PositionalTerm term) {
+        dictionary.add(term);
+    }
 
     /**
      * Searches for an existing {@link PositionalTerm} with the given {@code word}. If present, creates a new posting
@@ -22,7 +37,7 @@ public class PositionalIndex extends TreeSet<PositionalTerm> {
         PositionalTerm newTerm = new PositionalTerm(word, docID, positions);
         Optional<PositionalTerm> queriedTerm = findByWord(newTerm.getWord());
         if (queriedTerm.isEmpty()) {
-            add(newTerm);
+            dictionary.add(newTerm);
             return;
         }
         queriedTerm.get().addPosting(docID, positions);
@@ -41,7 +56,7 @@ public class PositionalIndex extends TreeSet<PositionalTerm> {
         PositionalTerm newTerm = new PositionalTerm(word, docID, position);
         Optional<PositionalTerm> queriedTerm = findByWord(newTerm.getWord());
         if (queriedTerm.isEmpty()) {
-            add(newTerm);
+            dictionary.add(newTerm);
             return;
         }
         queriedTerm.get().addPosting(docID, position);
@@ -55,7 +70,7 @@ public class PositionalIndex extends TreeSet<PositionalTerm> {
      */
     public Optional<PositionalTerm> findByWord(String word) {
         PositionalTerm example = new PositionalTerm(word, null);
-        NavigableSet<PositionalTerm> resultSet = subSet(example, true, example, true);
+        NavigableSet<PositionalTerm> resultSet = dictionary.subSet(example, true, example, true);
         if (resultSet.isEmpty()) {
             return Optional.empty();
         }
@@ -64,7 +79,7 @@ public class PositionalIndex extends TreeSet<PositionalTerm> {
 
     public boolean existsByWord(String word) {
         PositionalTerm example = new PositionalTerm(word, null);
-        return contains(example);
+        return dictionary.contains(example);
     }
 
 }

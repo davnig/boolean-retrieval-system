@@ -9,6 +9,7 @@ import com.davnig.units.serializer.PositionalTermSerializer;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
 
@@ -103,7 +104,8 @@ public class MovieIndexBuilder {
         try (
                 BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         ) {
-            for (PositionalTerm term : index) {
+            for (Iterator<PositionalTerm> it = index.positionalIndexIterator(); it.hasNext(); ) {
+                PositionalTerm term = it.next();
                 writer.write(serializer.serialize(term));
                 writer.newLine();
             }

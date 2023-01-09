@@ -91,7 +91,7 @@ public class SerializationTests {
         } catch (IOException e) {
             fail();
         }
-        result.forEach(System.out::println);
+        result.positionalIndexIterator().forEachRemaining(System.out::println);
         assertTrue(result.existsByWord("cat"));
         assertTrue(result.existsByWord("dog"));
         PositionalTerm expectedCat = indexExample.object.findByWord("cat").get();
