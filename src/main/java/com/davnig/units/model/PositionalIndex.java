@@ -1,9 +1,6 @@
 package com.davnig.units.model;
 
-import java.util.Iterator;
-import java.util.NavigableSet;
-import java.util.Optional;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * A positional index that manages {@link PositionalTerm}s using a Binary Search Tree.
@@ -14,6 +11,15 @@ public class PositionalIndex {
 
     public PositionalIndex() {
         dictionary = new TreeSet<>();
+    }
+
+    public Set<Integer> getAllDocIDs() {
+        Set<Integer> set = new HashSet<>();
+        for (Iterator<PositionalTerm> it = positionalIndexIterator(); it.hasNext(); ) {
+            PositionalTerm term = it.next();
+            set.addAll(term.getPostingList().getAllDocIDs());
+        }
+        return set;
     }
 
     public Iterator<PositionalTerm> positionalIndexIterator() {

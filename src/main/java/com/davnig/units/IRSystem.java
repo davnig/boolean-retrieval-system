@@ -6,12 +6,8 @@ import com.davnig.units.model.PositionalPostingList;
 import com.davnig.units.model.PositionalTerm;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.model.core.Document;
-import com.davnig.units.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
 
@@ -58,15 +54,23 @@ public class IRSystem {
      */
     public static void answer(String query) {
         IRSystem searchEngine = getInstance();
-        List<String> result;
+        PositionalPostingList postingListResult;
         if (query.split(" AND ").length > 1) {
             String[] words = normalizeAndTokenize(query, " and ");
-            result = searchEngine.applyAND(words);
-        } else {
+            postingListResult = searchEngine.fetchPostingListsAndComputeIntersection(words);
+        } else if (query.split(" OR ").length > 1) {
             String[] words = normalizeAndTokenize(query, " or ");
-            result = searchEngine.applyOR(words);
+            postingListResult = searchEngine.fetchPostingListsAndComputeUnion(words);
+        } else {
+            query = query.replace("NOT ", "");
+            String[] words = normalizeAndTokenize(query, " ");
+            Set<Integer> docIDs = searchEngine.fetchIDsOfDocNotContainingAnyOf(words);
+            List<String> movieTitles = searchEngine.getMovieTitlesFromDocIDs(docIDs);
+            System.out.println(movieTitles);
+            return;
         }
-        System.out.println(result);
+        List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
+        System.out.println(movieTitles);
     }
 
     /**
@@ -77,8 +81,9 @@ public class IRSystem {
     public static void answerAND(String query) {
         IRSystem searchEngine = getInstance();
         String[] words = normalizeAndTokenize(query, " ");
-        List<String> result = searchEngine.applyAND(words);
-        System.out.println(result);
+        PositionalPostingList postingListResult = searchEngine.fetchPostingListsAndComputeIntersection(words);
+        List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
+        System.out.println(movieTitles);
     }
 
     /**
@@ -89,15 +94,18 @@ public class IRSystem {
      */
     public static void answerOR(String query) {
         IRSystem searchEngine = getInstance();
-        String normQuery = StringUtils.normalize(query);
-        String[] words = normQuery.split(" ");
-        List<String> result = searchEngine.applyOR(words);
-        System.out.println(result);
+        String[] words = normalizeAndTokenize(query, " ");
+        PositionalPostingList postingListResult = searchEngine.fetchPostingListsAndComputeUnion(words);
+        List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
+        System.out.println(movieTitles);
     }
 
     public static void answerNOT(String query) {
         IRSystem searchEngine = getInstance();
-        String normQuery = StringUtils.normalize(query);
+        String[] words = normalizeAndTokenize(query, " ");
+        Set<Integer> docIDs = searchEngine.fetchIDsOfDocNotContainingAnyOf(words);
+        List<String> movieTitles = searchEngine.getMovieTitlesFromDocIDs(docIDs);
+        System.out.println(movieTitles);
     }
 
     /**
@@ -108,52 +116,64 @@ public class IRSystem {
      */
     public static void answerPhrase(String query) {
         IRSystem searchEngine = getInstance();
-        String normQuery = StringUtils.normalize(query);
-        String[] words = normQuery.split(" ");
-        List<String> result = searchEngine.findPhrase(words);
-        System.out.println(result);
+        String[] words = normalizeAndTokenize(query, " ");
+        PositionalPostingList postingListResult = searchEngine.findPhrase(words);
+        List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
+        System.out.println(movieTitles);
     }
 
     private static void answerWildcard(String query) {
         // TODO
     }
 
-    private List<String> applyAND(String... words) {
-        PositionalPostingList postingListIntersection = Arrays.stream(words)
+    private PositionalPostingList fetchPostingListsAndComputeIntersection(String... words) {
+        return Arrays.stream(words)
                 .map(index::findByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(PositionalTerm::getPostingList)
                 .reduce(PositionalPostingList::intersect)
                 .orElse(new PositionalPostingList());
-        return getMovieTitlesFromPostingList(postingListIntersection);
     }
 
-    private List<String> applyOR(String... words) {
-        PositionalPostingList postingListUnion = Arrays.stream(words)
+    private PositionalPostingList fetchPostingListsAndComputeUnion(String... words) {
+        return Arrays.stream(words)
                 .map(index::findByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(PositionalTerm::getPostingList)
                 .reduce(PositionalPostingList::union)
                 .orElse(new PositionalPostingList());
-        return getMovieTitlesFromPostingList(postingListUnion);
     }
 
-    private List<String> findPhrase(String... words) {
-        PositionalPostingList postingListResult = Arrays.stream(words)
+    private Set<Integer> fetchIDsOfDocNotContainingAnyOf(String... words) {
+        PositionalPostingList postingList = fetchPostingListsAndComputeUnion(words);
+        Set<Integer> allDocIDs = index.getAllDocIDs();
+        postingList.getAllDocIDs().forEach(allDocIDs::remove);
+        return allDocIDs;
+    }
+
+    private PositionalPostingList findPhrase(String... words) {
+        return Arrays.stream(words)
                 .map(index::findByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(PositionalTerm::getPostingList)
                 .reduce(PositionalPostingList::intersectAndFillWithAdjacentPositions)
                 .orElse(new PositionalPostingList());
-        return getMovieTitlesFromPostingList(postingListResult);
     }
 
     private List<String> getMovieTitlesFromPostingList(PositionalPostingList postingList) {
         return postingList.getAllDocIDs().stream()
-                .map(id -> corpus.getDocumentByID(id))
+                .map(id -> this.corpus.getDocumentByID(id))
+                .map(Document::content)
+                .map(Movie::title)
+                .toList();
+    }
+
+    private List<String> getMovieTitlesFromDocIDs(Set<Integer> docIDs) {
+        return docIDs.stream()
+                .map(id -> this.corpus.getDocumentByID(id))
                 .map(Document::content)
                 .map(Movie::title)
                 .toList();
