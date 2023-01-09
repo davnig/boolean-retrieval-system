@@ -51,13 +51,16 @@ public class MovieIndexBuilder {
 
     private void loadIndexFromFile(File file) {
         System.out.println("Index found. Loading in memory...");
+        long start = System.nanoTime();
         try (
                 BufferedReader reader = new BufferedReader(new FileReader(file))
         ) {
             reader.lines().parallel()
                     .map(serializer::deserialize)
                     .forEach(index::addTerm);
-            System.out.println("Index loaded.");
+            long end = System.nanoTime();
+            long execution = end - start;
+            System.out.println("Index loaded. Execution time: " + execution);
         } catch (IOException e) {
             System.err.println("An error occured while reading index file: " + e.getMessage());
             System.exit(1);

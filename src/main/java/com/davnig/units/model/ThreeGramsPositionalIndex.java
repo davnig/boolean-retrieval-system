@@ -9,13 +9,13 @@ import static com.davnig.units.util.StringUtils.extractThreeGrams;
  */
 public class ThreeGramsPositionalIndex extends PositionalIndex {
 
-    private final Map<String, List<PositionalTerm>> threeGramsIndex;
+    private final Map<String, Set<PositionalTerm>> threeGramsIndex;
 
     public ThreeGramsPositionalIndex() {
         threeGramsIndex = new HashMap<>();
     }
 
-    public List<PositionalTerm> findByGram(String gram) {
+    public Set<PositionalTerm> findByGram(String gram) {
         return threeGramsIndex.get(gram);
     }
 
@@ -41,33 +41,21 @@ public class ThreeGramsPositionalIndex extends PositionalIndex {
      * @param term {@link PositionalTerm}
      */
     public void addThreeGram(String gram, PositionalTerm term) {
-        if (existsWordWithGramInIndex(term.getWord(), gram)) {
-            return;
-        }
         if (existsGramInIndex(gram)) {
-            List<PositionalTerm> termList = threeGramsIndex.get(gram);
-            if (termList == null) {
-                termList = new ArrayList<>();
-            }
-            termList.add(term);
+            Set<PositionalTerm> termSet = threeGramsIndex.get(gram);
+            if (termSet == null) {
+                termSet = new HashSet<>();
+            } else termSet.remove(term); // the removal method uses equal to check existence, so it just compares docIDs
+            termSet.add(term);
             return;
         }
-        ArrayList<PositionalTerm> termList = new ArrayList<>();
+        Set<PositionalTerm> termList = new HashSet<>();
         termList.add(term);
         threeGramsIndex.put(gram, termList);
     }
 
     public boolean existsGramInIndex(String gram) {
         return threeGramsIndex.containsKey(gram);
-    }
-
-    public boolean existsWordWithGramInIndex(String word, String gram) {
-        if (!existsGramInIndex(gram)) {
-            return false;
-        }
-        return threeGramsIndex.get(gram).stream()
-                .map(PositionalTerm::getWord)
-                .anyMatch(w -> w.equals(word));
     }
 
     public int size() {
