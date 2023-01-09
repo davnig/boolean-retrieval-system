@@ -129,7 +129,7 @@ public class SerializationTests {
     private Example<PositionalTerm> getTermExample() {
         return new Example<>(
                 createTerm(),
-                "cat:1[1,2,3]2[1,2,3]3[1]:$ca,cat,at$"
+                "cat:1[1,2,3]2[1,2,3]3[1]"
         );
     }
 

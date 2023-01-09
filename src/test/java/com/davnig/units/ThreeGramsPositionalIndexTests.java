@@ -29,7 +29,7 @@ public class ThreeGramsPositionalIndexTests {
         String[] grams = new String[]{"$ga", "gat", "att", "tto", "to$"};
         for (String gram : grams) {
             assertEquals(1, index.findByGram(gram).size());
-            assertEquals(term.getWord(), index.findByGram(gram).get(0).getWord());
+            assertTrue(index.findByGram(gram).contains(term));
         }
     }
 
