@@ -1,5 +1,10 @@
 package com.davnig.units.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Utility class for {@link String} type.
  */
@@ -41,4 +46,22 @@ public class StringUtils {
         return input.split(regex);
     }
 
+    /**
+     * Extracts three-grams from the given input.
+     *
+     * @param input a {@link String}
+     * @return a {@link List} of {@link String} representing three-grams
+     */
+    public static List<String> extractThreeGrams(String input) {
+        String extendedWord = String.format("$%s$", input);
+        Pattern pattern = Pattern.compile(".{3}");
+        Matcher matcher = pattern.matcher(extendedWord);
+        ArrayList<String> threeGrams = new ArrayList<>();
+        for (int i = 0; i < extendedWord.length(); i++) {
+            if (matcher.find(i)) {
+                threeGrams.add(extendedWord.substring(matcher.start(), matcher.end()));
+            }
+        }
+        return threeGrams;
+    }
 }

@@ -3,13 +3,17 @@ package com.davnig.units.serializer;
 import com.davnig.units.model.PositionalPostingList;
 import com.davnig.units.model.PositionalTerm;
 
+import static com.davnig.units.util.StringUtils.extractThreeGrams;
+
 public class PositionalTermSerializer implements Serializer<PositionalTerm> {
 
     private Serializer<PositionalPostingList> postingListSerializer;
 
     @Override
     public String serialize(PositionalTerm input) {
-        return input.toString();
+        return String.format("%s:%s",
+                input.toString(),
+                String.join(",", extractThreeGrams(input.getWord())));
     }
 
     @Override

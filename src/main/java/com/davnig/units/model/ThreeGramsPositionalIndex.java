@@ -1,8 +1,8 @@
 package com.davnig.units.model;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static com.davnig.units.util.StringUtils.extractThreeGrams;
 
 /**
  * A three-grams index backed up by a {@link PositionalIndex}.
@@ -55,19 +55,6 @@ public class ThreeGramsPositionalIndex extends PositionalIndex {
         ArrayList<PositionalTerm> termList = new ArrayList<>();
         termList.add(term);
         threeGramsIndex.put(gram, termList);
-    }
-
-    private List<String> extractThreeGrams(String word) {
-        String extendedWord = String.format("$%s$", word);
-        Pattern pattern = Pattern.compile(".{3}");
-        Matcher matcher = pattern.matcher(extendedWord);
-        ArrayList<String> threeGrams = new ArrayList<>();
-        for (int i = 0; i < extendedWord.length(); i++) {
-            if (matcher.find(i)) {
-                threeGrams.add(extendedWord.substring(matcher.start(), matcher.end()));
-            }
-        }
-        return threeGrams;
     }
 
     public boolean existsGramInIndex(String gram) {
