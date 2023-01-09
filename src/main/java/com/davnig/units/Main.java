@@ -1,7 +1,7 @@
 package com.davnig.units;
 
 import com.davnig.units.model.Movie;
-import com.davnig.units.model.PositionalIndex;
+import com.davnig.units.model.ThreeGramsPositionalIndex;
 import com.davnig.units.model.core.Corpus;
 
 public class Main {
@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         CorpusReader<Movie> movieCorpusReader = MovieCorpusReader.getInstance();
         Corpus<Movie> corpus = movieCorpusReader.loadCorpus();
-        PositionalIndex index = MovieIndexBuilder.build("data/index.txt");
+        ThreeGramsPositionalIndex index = MovieIndexBuilder.build("data/index.txt");
         IRSystem.start(corpus, index);
     }
 

@@ -1,7 +1,6 @@
 package com.davnig.units;
 
 import com.davnig.units.model.Movie;
-import com.davnig.units.model.PositionalIndex;
 import com.davnig.units.model.PositionalTerm;
 import com.davnig.units.model.ThreeGramsPositionalIndex;
 import com.davnig.units.model.core.Corpus;
@@ -34,12 +33,12 @@ public class MovieIndexBuilder {
         return instance;
     }
 
-    public static PositionalIndex build(String source) {
+    public static ThreeGramsPositionalIndex build(String source) {
         instance = MovieIndexBuilder.getInstance(source);
         return instance.loadIndexFromFileOrPopulateFromCorpus();
     }
 
-    private PositionalIndex loadIndexFromFileOrPopulateFromCorpus() {
+    private ThreeGramsPositionalIndex loadIndexFromFileOrPopulateFromCorpus() {
         File file = new File(INDEX_FILE_PATH);
         if (file.exists()) {
             loadIndexFromFile(file);

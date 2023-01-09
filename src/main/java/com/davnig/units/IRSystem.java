@@ -1,20 +1,22 @@
 package com.davnig.units;
 
 import com.davnig.units.model.Movie;
-import com.davnig.units.model.PositionalIndex;
 import com.davnig.units.model.PositionalPostingList;
 import com.davnig.units.model.PositionalTerm;
+import com.davnig.units.model.ThreeGramsPositionalIndex;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.model.core.Document;
+import com.davnig.units.util.StringUtils;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
 
 public class IRSystem {
 
     private static IRSystem instance;
-    private PositionalIndex index;
+    private ThreeGramsPositionalIndex index;
     private Corpus<Movie> corpus;
 
     private IRSystem() {
@@ -29,7 +31,7 @@ public class IRSystem {
         return instance;
     }
 
-    public static void start(Corpus<Movie> corpus, PositionalIndex index) {
+    public static void start(Corpus<Movie> corpus, ThreeGramsPositionalIndex index) {
         getInstance().corpus = corpus;
         getInstance().index = index;
         Scanner scanner = new Scanner(System.in);
@@ -100,6 +102,12 @@ public class IRSystem {
         System.out.println(movieTitles);
     }
 
+    /**
+     * Searches for movie descriptions not containing any of the given terms and
+     * prints their titles.
+     *
+     * @param query a list of terms separated by whitespaces
+     */
     public static void answerNOT(String query) {
         IRSystem searchEngine = getInstance();
         String[] words = normalizeAndTokenize(query, " ");
@@ -122,8 +130,45 @@ public class IRSystem {
         System.out.println(movieTitles);
     }
 
+    /**
+     * Searches for movie descriptions containing words that match the given wildcard query
+     * and prints their titles.
+     *
+     * @param query a single-term wildcard query
+     */
     private static void answerWildcard(String query) {
-        // TODO
+        IRSystem searchEngine = getInstance();
+        List<String> threeGrams = extractThreeGramsFromQuery(query);
+        String[] words = searchEngine.searchWordsByThreeGramsMatchingQuery(threeGrams, query);
+        PositionalPostingList postingListResult = searchEngine.fetchPostingListsAndComputeIntersection(words);
+        List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
+        System.out.println(movieTitles);
+    }
+
+    private String[] searchWordsByThreeGramsMatchingQuery(List<String> threeGrams, String query) {
+        return (String[]) threeGrams.stream()
+                .map(gram -> this.index.findByGram(gram))
+                .flatMap(Collection::stream)
+                .map(PositionalTerm::getWord)
+                .filter(word -> doesWordMatchWildcardQuery(word, query))
+                .toArray();
+    }
+
+    private static List<String> extractThreeGramsFromQuery(String query) {
+        List<String> threeGrams = new ArrayList<>();
+        query = String.format("$%s$", query);
+        String[] tokens = query.split("\\*");
+        Arrays.stream(tokens)
+                .map(StringUtils::extractThreeGrams)
+                .flatMap(Collection::stream)
+                .forEach(threeGrams::add);
+        return threeGrams;
+    }
+
+    private boolean doesWordMatchWildcardQuery(String word, String query) {
+        String regex = query.replace("*", ".*");
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(word).find();
     }
 
     private PositionalPostingList fetchPostingListsAndComputeIntersection(String... words) {
