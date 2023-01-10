@@ -1,7 +1,7 @@
 package com.davnig.units;
 
 import com.davnig.units.model.PositionalIndex;
-import com.davnig.units.model.PositionalPostingList;
+import com.davnig.units.model.PositionalPostingsList;
 import com.davnig.units.model.PositionalTerm;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ public class PositionalIndexTests {
         index.addTermOccurrence(testWord, 2, 1);
         Optional<PositionalTerm> queriedTerm = index.findByWord(testWord);
         assertTrue(queriedTerm.isPresent());
-        assertEquals(2, queriedTerm.get().getPostingList().size());
+        assertEquals(2, queriedTerm.get().getPostingsList().size());
     }
 
     @Test
@@ -54,10 +54,10 @@ public class PositionalIndexTests {
         Optional<PositionalTerm> queriedTerm = index.findByWord(testWord);
         assertTrue(queriedTerm.isPresent());
         assertEquals(testWord, queriedTerm.get().getWord());
-        PositionalPostingList postingList = queriedTerm.get().getPostingList();
-        assertEquals(1, postingList.size());
-        assertTrue(postingList.findPostingByDocID(testDocID).isPresent());
-        assertEquals(2, postingList.findPostingByDocID(testDocID).get().size());
+        PositionalPostingsList postingsList = queriedTerm.get().getPostingsList();
+        assertEquals(1, postingsList.size());
+        assertTrue(postingsList.findPostingByDocID(testDocID).isPresent());
+        assertEquals(2, postingsList.findPostingByDocID(testDocID).get().size());
     }
 
 }

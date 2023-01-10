@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class PositionalPostingList {
+public class PositionalPostingsList {
 
     private final List<PositionalPosting> postings;
 
-    public PositionalPostingList() {
+    public PositionalPostingsList() {
         postings = new ArrayList<>();
     }
 
-    public PositionalPostingList(List<PositionalPosting> postings) {
+    public PositionalPostingsList(List<PositionalPosting> postings) {
         this.postings = postings;
     }
 
@@ -60,7 +60,7 @@ public class PositionalPostingList {
     }
 
     /**
-     * Same as {@link PositionalPostingList#addOccurrenceInDoc(int, int)} but with multiple positions,
+     * Same as {@link PositionalPostingsList#addOccurrenceInDoc(int, int)} but with multiple positions,
      * which are assumed to be already ordered.
      *
      * @param docID     the document ID
@@ -76,7 +76,7 @@ public class PositionalPostingList {
     }
 
     /**
-     * Same as {@link PositionalPostingList#addOccurrenceInDoc(int, int)} but with multiple positions,
+     * Same as {@link PositionalPostingsList#addOccurrenceInDoc(int, int)} but with multiple positions,
      * which are assumed to be already ordered.
      *
      * @param docID     the document ID
@@ -92,12 +92,12 @@ public class PositionalPostingList {
     }
 
     /**
-     * Performs an intersection between this {@link PositionalPostingList} and the one provided as argument.
+     * Performs an intersection between this {@link PositionalPostingsList} and the one provided as argument.
      *
      * @param other the second posting list
-     * @return a {@link PositionalPostingList} representing the intersection
+     * @return a {@link PositionalPostingsList} representing the intersection
      */
-    public PositionalPostingList intersect(PositionalPostingList other) {
+    public PositionalPostingsList intersect(PositionalPostingsList other) {
         List<PositionalPosting> intersection = new ArrayList<>();
         for (int thisPointer = 0, otherPointer = 0;
              ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings); ) {
@@ -113,18 +113,18 @@ public class PositionalPostingList {
                 otherPointer++;
             }
         }
-        return new PositionalPostingList(intersection);
+        return new PositionalPostingsList(intersection);
     }
 
     /**
-     * Performs an intersection between this {@link PositionalPostingList} and the one provided as argument, finding
+     * Performs an intersection between this {@link PositionalPostingsList} and the one provided as argument, finding
      * the {@link PositionalPosting}s in common. Each of them is filled with the positions at which both terms are
      * adjacent in that document.
      *
      * @param other the second posting list
-     * @return a {@link PositionalPostingList} representing the intersection
+     * @return a {@link PositionalPostingsList} representing the intersection
      */
-    public PositionalPostingList intersectAndFillWithAdjacentPositions(PositionalPostingList other) {
+    public PositionalPostingsList intersectAndFillWithAdjacentPositions(PositionalPostingsList other) {
         List<PositionalPosting> intersection = new ArrayList<>();
         for (int thisPointer = 0, otherPointer = 0;
              ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings); ) {
@@ -142,16 +142,16 @@ public class PositionalPostingList {
                 otherPointer++;
             }
         }
-        return new PositionalPostingList(intersection);
+        return new PositionalPostingsList(intersection);
     }
 
     /**
-     * Performs a union between this {@link PositionalPostingList} and the one provided as argument.
+     * Performs a union between this {@link PositionalPostingsList} and the one provided as argument.
      *
      * @param other the second posting list
-     * @return a {@link PositionalPostingList} representing the union
+     * @return a {@link PositionalPostingsList} representing the union
      */
-    public PositionalPostingList union(PositionalPostingList other) {
+    public PositionalPostingsList union(PositionalPostingsList other) {
         List<PositionalPosting> union = new ArrayList<>();
         int thisPointer = 0, otherPointer = 0;
         while (ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings)) {
@@ -171,7 +171,7 @@ public class PositionalPostingList {
         }
         unionAllRemaining(union, thisPointer, this.postings);
         unionAllRemaining(union, otherPointer, other.postings);
-        return new PositionalPostingList(union);
+        return new PositionalPostingsList(union);
     }
 
     private void unionAllRemaining(List<PositionalPosting> intermediateResult, int pointer, List<PositionalPosting> source) {

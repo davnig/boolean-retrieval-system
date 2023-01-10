@@ -1,24 +1,24 @@
 package com.davnig.units.serializer;
 
 import com.davnig.units.model.PositionalPosting;
-import com.davnig.units.model.PositionalPostingList;
+import com.davnig.units.model.PositionalPostingsList;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PositionalPostingListSerializer implements Serializer<PositionalPostingList> {
+public class PositionalPostingsListSerializer implements Serializer<PositionalPostingsList> {
 
     private Serializer<PositionalPosting> postingSerializer;
 
     @Override
-    public String serialize(PositionalPostingList input) {
+    public String serialize(PositionalPostingsList input) {
         return input.toString();
     }
 
     @Override
-    public PositionalPostingList deserialize(String input) {
-        PositionalPostingList result = new PositionalPostingList();
+    public PositionalPostingsList deserialize(String input) {
+        PositionalPostingsList result = new PositionalPostingsList();
         postingSerializer = new PositionalPostingSerializer();
         ArrayList<String> postingsAsString = extractPostingsAsString(input);
         postingsAsString.stream()
@@ -27,12 +27,12 @@ public class PositionalPostingListSerializer implements Serializer<PositionalPos
         return result;
     }
 
-    private ArrayList<String> extractPostingsAsString(String postingListAsString) {
+    private ArrayList<String> extractPostingsAsString(String postingsListAsString) {
         ArrayList<String> postingsAsString = new ArrayList<>();
         Pattern postingPattern = Pattern.compile("(\\d*(\\[(\\d*,)*)\\d*\\Q]\\E)");
-        Matcher matcher = postingPattern.matcher(postingListAsString);
+        Matcher matcher = postingPattern.matcher(postingsListAsString);
         while (matcher.find()) {
-            String encodedPosting = postingListAsString.substring(matcher.start(), matcher.end());
+            String encodedPosting = postingsListAsString.substring(matcher.start(), matcher.end());
             postingsAsString.add(encodedPosting);
         }
         return postingsAsString;

@@ -10,26 +10,26 @@ import java.util.Objects;
 public class PositionalTerm implements Comparable<PositionalTerm> {
 
     private String word;
-    private PositionalPostingList postingList;
+    private PositionalPostingsList postingsList;
 
     public PositionalTerm(String word) {
         this.word = word;
-        this.postingList = new PositionalPostingList();
+        this.postingsList = new PositionalPostingsList();
     }
 
     public PositionalTerm(String word, int docID, int position) {
         this(word);
-        this.postingList.addOccurrenceInDoc(docID, position);
+        this.postingsList.addOccurrenceInDoc(docID, position);
     }
 
     public PositionalTerm(String word, int docID, int... position) {
         this(word);
-        this.postingList.addOccurrencesInDoc(docID, position);
+        this.postingsList.addOccurrencesInDoc(docID, position);
     }
 
-    public PositionalTerm(String word, PositionalPostingList postingList) {
+    public PositionalTerm(String word, PositionalPostingsList postingsList) {
         this.word = word;
-        this.postingList = postingList;
+        this.postingsList = postingsList;
     }
 
     /**
@@ -39,7 +39,7 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
      * @param position the position of the term inside the document
      */
     public void addOccurrenceInDoc(int docID, int position) {
-        postingList.addOccurrenceInDoc(docID, position);
+        postingsList.addOccurrenceInDoc(docID, position);
     }
 
     /**
@@ -49,7 +49,7 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
      * @param positions the positions of the term inside the document
      */
     public void addOccurrencesInDoc(int docID, int[] positions) {
-        postingList.addOccurrencesInDoc(docID, positions);
+        postingsList.addOccurrencesInDoc(docID, positions);
     }
 
     @Override
@@ -71,6 +71,6 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
 
     @Override
     public String toString() {
-        return String.format("%s:%s", word, postingList.toString());
+        return String.format("%s:%s", word, postingsList.toString());
     }
 }

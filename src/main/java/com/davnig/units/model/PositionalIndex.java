@@ -19,7 +19,7 @@ public class PositionalIndex extends InvertedIndex {
         Set<Integer> set = new HashSet<>();
         for (Iterator<PositionalTerm> it = positionalIndexIterator(); it.hasNext(); ) {
             PositionalTerm term = it.next();
-            set.addAll(term.getPostingList().getAllDocIDs());
+            set.addAll(term.getPostingsList().getAllDocIDs());
         }
         return set;
     }

@@ -2,10 +2,10 @@ package com.davnig.units;
 
 import com.davnig.units.model.PositionalIndex;
 import com.davnig.units.model.PositionalPosting;
-import com.davnig.units.model.PositionalPostingList;
+import com.davnig.units.model.PositionalPostingsList;
 import com.davnig.units.model.PositionalTerm;
-import com.davnig.units.serializer.PositionalPostingListSerializer;
 import com.davnig.units.serializer.PositionalPostingSerializer;
+import com.davnig.units.serializer.PositionalPostingsListSerializer;
 import com.davnig.units.serializer.PositionalTermSerializer;
 import com.davnig.units.serializer.Serializer;
 import org.junit.jupiter.api.Test;
@@ -36,9 +36,9 @@ public class SerializationTests {
     }
 
     @Test
-    void given_postingList_when_serialize_should_correctlyEncode() {
-        Serializer<PositionalPostingList> serializer = new PositionalPostingListSerializer();
-        Example<PositionalPostingList> example = getPostingListExample();
+    void given_postingsList_when_serialize_should_correctlyEncode() {
+        Serializer<PositionalPostingsList> serializer = new PositionalPostingsListSerializer();
+        Example<PositionalPostingsList> example = getPostingsListExample();
         assertEquals(example.string, serializer.serialize(example.object));
     }
 
@@ -52,18 +52,18 @@ public class SerializationTests {
     // DESERIALIZATION
 
     @Test
-    void given_encodedPostingList_when_deserialize_should_correctlyDecode() {
+    void given_encodedPostingsList_when_deserialize_should_correctlyDecode() {
         Serializer<PositionalTerm> serializer = new PositionalTermSerializer();
         Example<PositionalTerm> termExample = getTermExample();
         PositionalTerm result = serializer.deserialize(termExample.string);
         assertEquals(termExample.object, result);
-        assertEquals(3, result.getPostingList().size());
-        assertTrue(result.getPostingList().findPostingByDocID(1).isPresent());
-        assertTrue(result.getPostingList().findPostingByDocID(2).isPresent());
-        assertTrue(result.getPostingList().findPostingByDocID(3).isPresent());
-        PositionalPosting firstPosting = result.getPostingList().findPostingByDocID(1).get();
-        PositionalPosting secondPosting = result.getPostingList().findPostingByDocID(2).get();
-        PositionalPosting thirdPosting = result.getPostingList().findPostingByDocID(3).get();
+        assertEquals(3, result.getPostingsList().size());
+        assertTrue(result.getPostingsList().findPostingByDocID(1).isPresent());
+        assertTrue(result.getPostingsList().findPostingByDocID(2).isPresent());
+        assertTrue(result.getPostingsList().findPostingByDocID(3).isPresent());
+        PositionalPosting firstPosting = result.getPostingsList().findPostingByDocID(1).get();
+        PositionalPosting secondPosting = result.getPostingsList().findPostingByDocID(2).get();
+        PositionalPosting thirdPosting = result.getPostingsList().findPostingByDocID(3).get();
         assertEquals(3, firstPosting.size());
         assertEquals(3, secondPosting.size());
         assertEquals(1, thirdPosting.size());
@@ -98,14 +98,14 @@ public class SerializationTests {
         PositionalTerm expectedDog = indexExample.object.findByWord("dog").get();
         PositionalTerm catResult = result.findByWord("cat").get();
         PositionalTerm dogResult = result.findByWord("dog").get();
-        assertEquals(expectedCat.getPostingList().size(), catResult.getPostingList().size());
-        assertEquals(expectedDog.getPostingList().size(), dogResult.getPostingList().size());
-        assertTrue(catResult.getPostingList().findPostingByDocID(2).isPresent());
-        assertTrue(dogResult.getPostingList().findPostingByDocID(23567).isPresent());
-        assertEquals(expectedCat.getPostingList().findPostingByDocID(2).get().getPositions().get(2),
-                catResult.getPostingList().findPostingByDocID(2).get().getPositions().get(2));
-        assertEquals(expectedDog.getPostingList().findPostingByDocID(23567).get().getPositions().get(2),
-                dogResult.getPostingList().findPostingByDocID(23567).get().getPositions().get(2));
+        assertEquals(expectedCat.getPostingsList().size(), catResult.getPostingsList().size());
+        assertEquals(expectedDog.getPostingsList().size(), dogResult.getPostingsList().size());
+        assertTrue(catResult.getPostingsList().findPostingByDocID(2).isPresent());
+        assertTrue(dogResult.getPostingsList().findPostingByDocID(23567).isPresent());
+        assertEquals(expectedCat.getPostingsList().findPostingByDocID(2).get().getPositions().get(2),
+                catResult.getPostingsList().findPostingByDocID(2).get().getPositions().get(2));
+        assertEquals(expectedDog.getPostingsList().findPostingByDocID(23567).get().getPositions().get(2),
+                dogResult.getPostingsList().findPostingByDocID(23567).get().getPositions().get(2));
     }
 
     private Example<PositionalIndex> getIndexExample() {
@@ -133,9 +133,9 @@ public class SerializationTests {
         );
     }
 
-    private Example<PositionalPostingList> getPostingListExample() {
+    private Example<PositionalPostingsList> getPostingsListExample() {
         return new Example<>(
-                createPostingList(),
+                createPostingsList(),
                 "1[1,2,3]2[1,2,3]3[1]"
         );
     }
@@ -148,21 +148,21 @@ public class SerializationTests {
     }
 
     private PositionalTerm createTerm() {
-        PositionalPostingList postingList = new PositionalPostingList();
-        postingList.addOccurrencesInDoc(1, 1, 2, 3);
-        postingList.addOccurrencesInDoc(2, 1, 2, 3);
-        postingList.addOccurrenceInDoc(3, 1);
-        return new PositionalTerm("cat", postingList);
+        PositionalPostingsList postingsList = new PositionalPostingsList();
+        postingsList.addOccurrencesInDoc(1, 1, 2, 3);
+        postingsList.addOccurrencesInDoc(2, 1, 2, 3);
+        postingsList.addOccurrenceInDoc(3, 1);
+        return new PositionalTerm("cat", postingsList);
     }
 
-    private PositionalPostingList createPostingList() {
-        PositionalPostingList postingList = new PositionalPostingList();
-        postingList.addOccurrencesInDoc(1, 1, 2, 3);
-        postingList.addOccurrenceInDoc(2, 1);
-        postingList.addOccurrenceInDoc(2, 2);
-        postingList.addOccurrenceInDoc(2, 3);
-        postingList.addOccurrenceInDoc(3, 1);
-        return postingList;
+    private PositionalPostingsList createPostingsList() {
+        PositionalPostingsList postingsList = new PositionalPostingsList();
+        postingsList.addOccurrencesInDoc(1, 1, 2, 3);
+        postingsList.addOccurrenceInDoc(2, 1);
+        postingsList.addOccurrenceInDoc(2, 2);
+        postingsList.addOccurrenceInDoc(2, 3);
+        postingsList.addOccurrenceInDoc(3, 1);
+        return postingsList;
     }
 
     private PositionalPosting createPosting() {

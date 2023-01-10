@@ -1,11 +1,11 @@
 package com.davnig.units.serializer;
 
-import com.davnig.units.model.PositionalPostingList;
+import com.davnig.units.model.PositionalPostingsList;
 import com.davnig.units.model.PositionalTerm;
 
 public class PositionalTermSerializer implements Serializer<PositionalTerm> {
 
-    private Serializer<PositionalPostingList> postingListSerializer;
+    private Serializer<PositionalPostingsList> postingsListSerializer;
 
     @Override
     public String serialize(PositionalTerm input) {
@@ -16,10 +16,10 @@ public class PositionalTermSerializer implements Serializer<PositionalTerm> {
     public PositionalTerm deserialize(String input) {
         String[] tokens = input.split(":");
         String word = tokens[0];
-        String postingListAsString = tokens[1];
-        postingListSerializer = new PositionalPostingListSerializer();
-        PositionalPostingList postingList = postingListSerializer.deserialize(postingListAsString);
-        return new PositionalTerm(word, postingList);
+        String postingsListAsString = tokens[1];
+        postingsListSerializer = new PositionalPostingsListSerializer();
+        PositionalPostingsList postingsList = postingsListSerializer.deserialize(postingsListAsString);
+        return new PositionalTerm(word, postingsList);
     }
 
 }

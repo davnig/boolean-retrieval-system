@@ -54,7 +54,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
     public void answer(String query) {
         checkIRSystemReadiness();
         long start = System.nanoTime();
-        PositionalPostingList postingListResult;
+        PositionalPostingsList postingListResult;
         if (isANDQuery(query)) {
             postingListResult = answerAND(query);
         } else if (isORQuery(query)) {
@@ -76,17 +76,17 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         }
     }
 
-    private PositionalPostingList answerAND(String query) {
+    private PositionalPostingsList answerAND(String query) {
         String[] words = normalizeAndTokenize(query, " and ");
         return fetchPostingListsAndComputeIntersection(words);
     }
 
-    private PositionalPostingList answerOR(String query) {
+    private PositionalPostingsList answerOR(String query) {
         String[] words = normalizeAndTokenize(query, " or ");
         return fetchPostingListsAndComputeUnion(words);
     }
 
-    private PositionalPostingList answerNOT(String query) {
+    private PositionalPostingsList answerNOT(String query) {
         query = query.replace("NOT ", "");
         String[] words = normalizeAndTokenize(query, " ");
         return fetchIDsOfDocNotContainingAnyOf(words);
@@ -102,7 +102,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         MovieIRSystem searchEngine = getInstance();
         long start = System.nanoTime();
         String[] words = normalizeAndTokenize(query, " ");
-        PositionalPostingList postingListResult = searchEngine.findPhrase(words);
+        PositionalPostingsList postingListResult = searchEngine.findPhrase(words);
         List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
         long end = System.nanoTime();
         long duration = end - start;
@@ -122,7 +122,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         List<String> threeGrams = extractThreeGramsFromQuery(query);
         String[] words = searchEngine.searchWordsByThreeGramsMatchingQuery(threeGrams, query);
         System.out.printf("%nWords matched: %n%s%n", Arrays.asList(words));
-        PositionalPostingList postingListResult = searchEngine.fetchPostingListsAndComputeUnion(words);
+        PositionalPostingsList postingListResult = searchEngine.fetchPostingListsAndComputeUnion(words);
         List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
         long end = System.nanoTime();
         long duration = end - start;
@@ -157,46 +157,46 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         return pattern.matcher(word).find();
     }
 
-    private PositionalPostingList fetchPostingListsAndComputeIntersection(String... words) {
+    private PositionalPostingsList fetchPostingListsAndComputeIntersection(String... words) {
         return Arrays.stream(words)
                 .map(index::findByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(PositionalTerm::getPostingList)
-                .reduce(PositionalPostingList::intersect)
-                .orElse(new PositionalPostingList());
+                .map(PositionalTerm::getPostingsList)
+                .reduce(PositionalPostingsList::intersect)
+                .orElse(new PositionalPostingsList());
     }
 
-    private PositionalPostingList fetchPostingListsAndComputeUnion(String... words) {
+    private PositionalPostingsList fetchPostingListsAndComputeUnion(String... words) {
         return Arrays.stream(words)
                 .map(index::findByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(PositionalTerm::getPostingList)
-                .reduce(PositionalPostingList::union)
-                .orElse(new PositionalPostingList());
+                .map(PositionalTerm::getPostingsList)
+                .reduce(PositionalPostingsList::union)
+                .orElse(new PositionalPostingsList());
     }
 
-    private PositionalPostingList fetchIDsOfDocNotContainingAnyOf(String... words) {
-        PositionalPostingList postingList = fetchPostingListsAndComputeUnion(words);
+    private PositionalPostingsList fetchIDsOfDocNotContainingAnyOf(String... words) {
+        PositionalPostingsList postingList = fetchPostingListsAndComputeUnion(words);
         Set<Integer> allDocIDs = index.getAllDocIDs();
         postingList.getAllDocIDs().forEach(allDocIDs::remove);
-        PositionalPostingList postingListResult =
-                new PositionalPostingList(allDocIDs.stream().map(PositionalPosting::new).collect(Collectors.toList()));
-        return postingListResult;
+        PositionalPostingsList postingsListResult =
+                new PositionalPostingsList(allDocIDs.stream().map(PositionalPosting::new).collect(Collectors.toList()));
+        return postingsListResult;
     }
 
-    private PositionalPostingList findPhrase(String... words) {
+    private PositionalPostingsList findPhrase(String... words) {
         return Arrays.stream(words)
                 .map(index::findByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(PositionalTerm::getPostingList)
-                .reduce(PositionalPostingList::intersectAndFillWithAdjacentPositions)
-                .orElse(new PositionalPostingList());
+                .map(PositionalTerm::getPostingsList)
+                .reduce(PositionalPostingsList::intersectAndFillWithAdjacentPositions)
+                .orElse(new PositionalPostingsList());
     }
 
-    private List<String> getMovieTitlesFromPostingList(PositionalPostingList postingList) {
+    private List<String> getMovieTitlesFromPostingList(PositionalPostingsList postingList) {
         return postingList.getAllDocIDs().stream()
                 .map(id -> corpus.getDocumentByID(id))
                 .map(Document::content)
