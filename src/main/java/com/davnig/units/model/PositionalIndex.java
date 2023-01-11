@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * A positional index that manages {@link PositionalTerm}s using a Binary Search Tree.
  */
-public class PositionalIndex {
+public class PositionalIndex extends InvertedIndex {
 
     protected final TreeSet<PositionalTerm> dictionary;
 

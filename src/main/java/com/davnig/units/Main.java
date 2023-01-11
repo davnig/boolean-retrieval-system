@@ -10,7 +10,8 @@ public class Main {
         CorpusReader<Movie> movieCorpusReader = MovieCorpusReader.getInstance();
         Corpus<Movie> corpus = movieCorpusReader.loadCorpus();
         ThreeGramsPositionalIndex index = MovieIndexBuilder.build("data/index.txt");
-        IRSystem.start(corpus, index);
+        IRSystem<Movie, ThreeGramsPositionalIndex> movieSearchEngine = MovieIRSystem.getInstance();
+        movieSearchEngine.start(corpus, index);
     }
 
 }
