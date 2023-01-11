@@ -1,8 +1,9 @@
-package com.davnig.units;
+package com.davnig.units.service.impl;
 
 import com.davnig.units.model.*;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.model.core.Document;
+import com.davnig.units.service.IRSystem;
 import com.davnig.units.util.SetUtils;
 import com.davnig.units.util.StringUtils;
 

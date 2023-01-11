@@ -1,4 +1,4 @@
-package com.davnig.units;
+package com.davnig.units.service;
 
 import com.davnig.units.model.core.Corpus;
 

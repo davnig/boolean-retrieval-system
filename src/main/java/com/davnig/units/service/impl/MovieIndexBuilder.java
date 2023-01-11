@@ -1,10 +1,12 @@
-package com.davnig.units;
+package com.davnig.units.service.impl;
 
 import com.davnig.units.model.Movie;
 import com.davnig.units.model.PositionalTerm;
 import com.davnig.units.model.ThreeGramsPositionalIndex;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.serializer.PositionalTermSerializer;
+import com.davnig.units.service.CorpusReader;
+import com.davnig.units.service.IndexBuilder;
 
 import java.io.*;
 import java.util.Arrays;
@@ -13,28 +15,28 @@ import java.util.Iterator;
 import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
-public class MovieIndexBuilder {
+public class MovieIndexBuilder implements IndexBuilder<ThreeGramsPositionalIndex> {
 
     private static MovieIndexBuilder instance;
-    private final String INDEX_FILE_PATH;
+    private final String INDEX_FILE_PATH = "data/index.txt";
     private final ThreeGramsPositionalIndex index;
     private final PositionalTermSerializer serializer;
 
-    private MovieIndexBuilder(String indexFilePath) {
-        INDEX_FILE_PATH = indexFilePath;
+    private MovieIndexBuilder() {
         index = new ThreeGramsPositionalIndex();
         serializer = new PositionalTermSerializer();
     }
 
-    private static MovieIndexBuilder getInstance(String indexFilePath) {
+    public static MovieIndexBuilder getInstance() {
         if (instance == null) {
-            instance = new MovieIndexBuilder(indexFilePath);
+            instance = new MovieIndexBuilder();
         }
         return instance;
     }
 
-    public static ThreeGramsPositionalIndex build(String source) {
-        instance = MovieIndexBuilder.getInstance(source);
+    @Override
+    public ThreeGramsPositionalIndex build() {
+        instance = MovieIndexBuilder.getInstance();
         return instance.loadIndexFromFileOrPopulateFromCorpus();
     }
 
