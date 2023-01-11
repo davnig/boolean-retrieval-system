@@ -60,7 +60,7 @@ public class MovieIndexBuilder {
                     .forEach(index::addTerm);
             long end = System.nanoTime();
             long execution = end - start;
-            System.out.printf("Index loaded. Execution time: %d sec%n", NANOSECONDS.toSeconds(execution));
+            System.out.printf("Index loaded in %d ms%n", NANOSECONDS.toMillis(execution));
         } catch (IOException e) {
             System.err.println("An error occurred while reading index file: " + e.getMessage());
             System.exit(1);
@@ -69,9 +69,12 @@ public class MovieIndexBuilder {
 
     private void populateIndexFromCorpus() {
         System.out.println("Index not found. Populating from corpus...");
+        long start = System.nanoTime();
         Corpus<Movie> movieCorpus = loadMovieCorpus();
         populateIndex(movieCorpus);
-        System.out.println("Index populated.");
+        long end = System.nanoTime();
+        long duration = end - start;
+        System.out.printf("Index populated in %d ms%n", NANOSECONDS.toMillis(duration));
     }
 
     private Corpus<Movie> loadMovieCorpus() {

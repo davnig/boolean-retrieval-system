@@ -59,6 +59,7 @@ public class IRSystem {
      */
     public static void answer(String query) {
         IRSystem searchEngine = getInstance();
+        long start = System.nanoTime();
         PositionalPostingList postingListResult;
         if (query.split(" AND ").length > 1) {
             String[] words = normalizeAndTokenize(query, " and ");
@@ -71,11 +72,17 @@ public class IRSystem {
             String[] words = normalizeAndTokenize(query, " ");
             Set<Integer> docIDs = searchEngine.fetchIDsOfDocNotContainingAnyOf(words);
             List<String> movieTitles = searchEngine.getMovieTitlesFromDocIDs(docIDs);
-            System.out.println(movieTitles);
+            long end = System.nanoTime();
+            long duration = end - start;
+            System.out.printf("%nFound %d results in %d ms:%n%s%n%n",
+                    movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
             return;
         }
         List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
-        System.out.println(movieTitles);
+        long end = System.nanoTime();
+        long duration = end - start;
+        System.out.printf("Found %d results in %d ms:%n%s%n%n",
+                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
     }
 
     /**
@@ -85,10 +92,14 @@ public class IRSystem {
      */
     public static void answerAND(String query) {
         IRSystem searchEngine = getInstance();
+        long start = System.nanoTime();
         String[] words = normalizeAndTokenize(query, " ");
         PositionalPostingList postingListResult = searchEngine.fetchPostingListsAndComputeIntersection(words);
         List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
-        System.out.println(movieTitles);
+        long end = System.nanoTime();
+        long duration = end - start;
+        System.out.printf("%nFound %d results in %d ms:%n%s%n%n",
+                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
     }
 
     /**
@@ -99,10 +110,14 @@ public class IRSystem {
      */
     public static void answerOR(String query) {
         IRSystem searchEngine = getInstance();
+        long start = System.nanoTime();
         String[] words = normalizeAndTokenize(query, " ");
         PositionalPostingList postingListResult = searchEngine.fetchPostingListsAndComputeUnion(words);
         List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
-        System.out.println(movieTitles);
+        long end = System.nanoTime();
+        long duration = end - start;
+        System.out.printf("%nFound %d results in %d ms:%n%s%n%n",
+                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
     }
 
     /**
@@ -113,10 +128,14 @@ public class IRSystem {
      */
     public static void answerNOT(String query) {
         IRSystem searchEngine = getInstance();
+        long start = System.nanoTime();
         String[] words = normalizeAndTokenize(query, " ");
         Set<Integer> docIDs = searchEngine.fetchIDsOfDocNotContainingAnyOf(words);
         List<String> movieTitles = searchEngine.getMovieTitlesFromDocIDs(docIDs);
-        System.out.println(movieTitles);
+        long end = System.nanoTime();
+        long duration = end - start;
+        System.out.printf("%nFound %d results in %d ms:%n%s%n%n",
+                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
     }
 
     /**
@@ -127,10 +146,14 @@ public class IRSystem {
      */
     public static void answerPhrase(String query) {
         IRSystem searchEngine = getInstance();
+        long start = System.nanoTime();
         String[] words = normalizeAndTokenize(query, " ");
         PositionalPostingList postingListResult = searchEngine.findPhrase(words);
         List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
-        System.out.println(movieTitles);
+        long end = System.nanoTime();
+        long duration = end - start;
+        System.out.printf("%nFound %d results in %d ms:%n%s%n%n",
+                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
     }
 
     /**
