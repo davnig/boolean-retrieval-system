@@ -1,6 +1,7 @@
 package com.davnig.units.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,6 +63,11 @@ public class StringUtils {
             }
         }
         return threeGrams;
+    }
+
+    public static boolean containsBooleanOperators(String input) {
+        return Arrays.stream(new String[]{"AND", "OR", "NOT"})
+                .anyMatch(input::contains);
     }
 
     public static String addLeadingAndTrailingDollarSymbol(String input) {

@@ -12,8 +12,7 @@ import com.davnig.units.util.StringUtils;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static com.davnig.units.util.StringUtils.addLeadingAndTrailingDollarSymbol;
-import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
+import static com.davnig.units.util.StringUtils.*;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class IRSystem {
@@ -61,7 +60,7 @@ public class IRSystem {
         IRSystem searchEngine = getInstance();
         long start = System.nanoTime();
         PositionalPostingList postingListResult;
-        if (query.split(" AND ").length > 1) {
+        if (query.split(" AND ").length > 1 || !containsBooleanOperators(query)) {
             String[] words = normalizeAndTokenize(query, " and ");
             postingListResult = searchEngine.fetchPostingListsAndComputeIntersection(words);
         } else if (query.split(" OR ").length > 1) {
