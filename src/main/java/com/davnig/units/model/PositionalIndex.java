@@ -1,5 +1,7 @@
 package com.davnig.units.model;
 
+import com.davnig.units.model.core.InvertedIndex;
+
 import java.util.*;
 
 /**

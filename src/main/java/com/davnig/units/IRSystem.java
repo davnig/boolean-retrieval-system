@@ -1,7 +1,7 @@
 package com.davnig.units;
 
-import com.davnig.units.model.InvertedIndex;
 import com.davnig.units.model.core.Corpus;
+import com.davnig.units.model.core.InvertedIndex;
 
 public interface IRSystem<T, I extends InvertedIndex> {
 
