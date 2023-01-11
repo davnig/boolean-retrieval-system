@@ -28,4 +28,4 @@ from Wikipedia and aligned metadata extracted from Freebase.
 - [x] Load the index from a file
 - [x] `AND`/`OR`/`NOT` queries support
 - [x] Phrase queries support
-- [ ] Wildcard queries support
+- [x] Wildcard queries support
