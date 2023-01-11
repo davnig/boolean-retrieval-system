@@ -26,6 +26,15 @@ public class ThreeGramsPositionalIndex extends PositionalIndex {
         extractAndAddThreeGrams(term);
     }
 
+    public void addTermOccurrenceAndGramsForEachToken(int docID, String[] tokens) {
+        for (int position = 0; position < tokens.length; position++) {
+            String token = tokens[position];
+            if (isTokenNotInBlackList(token)) {
+                addTermOccurrenceAndGrams(token, docID, position);
+            }
+        }
+    }
+
     public void addTermOccurrencesAndGrams(String word, int docID, int... positions) {
         Optional<PositionalTerm> termOpt = super.addTermOccurrences(word, docID, positions);
         termOpt.ifPresent(this::extractAndAddThreeGrams);
@@ -68,6 +77,11 @@ public class ThreeGramsPositionalIndex extends PositionalIndex {
 
     public int size() {
         return threeGramsIndex.size();
+    }
+
+    private boolean isTokenNotInBlackList(String token) {
+        String[] blackList = new String[]{"", "-"};
+        return Arrays.stream(blackList).noneMatch(el -> el.equals(token) || token.startsWith("--"));
     }
 
 }

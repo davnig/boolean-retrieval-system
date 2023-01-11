@@ -9,7 +9,6 @@ import com.davnig.units.service.CorpusReader;
 import com.davnig.units.service.IndexBuilder;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
@@ -87,22 +86,8 @@ public class MovieIndexBuilder implements IndexBuilder<ThreeGramsPositionalIndex
             int docID = document.docID();
             Movie movie = document.content();
             String[] tokens = normalizeAndTokenize(movie.description(), " ");
-            addTermOccurrenceAndGramsForEachToken(index, docID, tokens);
+            index.addTermOccurrenceAndGramsForEachToken(docID, tokens);
         });
-    }
-
-    private void addTermOccurrenceAndGramsForEachToken(ThreeGramsPositionalIndex index, int docID, String[] tokens) {
-        for (int position = 0; position < tokens.length; position++) {
-            String token = tokens[position];
-            if (isTokenNotInBlackList(token)) {
-                index.addTermOccurrenceAndGrams(token, docID, position);
-            }
-        }
-    }
-
-    private boolean isTokenNotInBlackList(String token) {
-        String[] blackList = new String[]{"", "-"};
-        return Arrays.stream(blackList).noneMatch(el -> el.equals(token) || token.startsWith("--"));
     }
 
     private void saveIndexToFile(ThreeGramsPositionalIndex index, File file) {
