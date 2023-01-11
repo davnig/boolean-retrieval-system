@@ -19,11 +19,9 @@ public class MovieIndexBuilder implements IndexBuilder<ThreeGramsPositionalIndex
 
     private static MovieIndexBuilder instance;
     private final String INDEX_FILE_PATH = "data/index.txt";
-    private final ThreeGramsPositionalIndex index;
     private final PositionalTermSerializer serializer;
 
     private MovieIndexBuilder() {
-        index = new ThreeGramsPositionalIndex();
         serializer = new PositionalTermSerializer();
     }
 
@@ -36,22 +34,22 @@ public class MovieIndexBuilder implements IndexBuilder<ThreeGramsPositionalIndex
 
     @Override
     public ThreeGramsPositionalIndex build() {
-        instance = MovieIndexBuilder.getInstance();
-        return instance.loadIndexFromFileOrPopulateFromCorpus();
+        return loadIndexFromFileOrPopulateFromCorpus();
     }
 
     private ThreeGramsPositionalIndex loadIndexFromFileOrPopulateFromCorpus() {
+        ThreeGramsPositionalIndex index = new ThreeGramsPositionalIndex();
         File file = new File(INDEX_FILE_PATH);
         if (file.exists()) {
-            loadIndexFromFile(file);
+            loadIndexFromFile(index, file);
             return index;
         }
-        populateIndexFromCorpus();
-        saveIndexToFile(file);
+        populateIndexFromCorpus(index);
+        saveIndexToFile(index, file);
         return index;
     }
 
-    private void loadIndexFromFile(File file) {
+    private void loadIndexFromFile(ThreeGramsPositionalIndex index, File file) {
         System.out.println("Index found. Loading in memory...");
         long start = System.nanoTime();
         try (
@@ -69,11 +67,11 @@ public class MovieIndexBuilder implements IndexBuilder<ThreeGramsPositionalIndex
         }
     }
 
-    private void populateIndexFromCorpus() {
+    private void populateIndexFromCorpus(ThreeGramsPositionalIndex index) {
         System.out.println("Index not found. Populating from corpus...");
         long start = System.nanoTime();
         Corpus<Movie> movieCorpus = loadMovieCorpus();
-        populateIndex(movieCorpus);
+        populateIndex(index, movieCorpus);
         long end = System.nanoTime();
         long duration = end - start;
         System.out.printf("Index populated in %d ms%n", NANOSECONDS.toMillis(duration));
@@ -84,16 +82,16 @@ public class MovieIndexBuilder implements IndexBuilder<ThreeGramsPositionalIndex
         return movieCorpusReader.loadCorpus();
     }
 
-    private void populateIndex(Corpus<Movie> movieCorpus) {
+    private void populateIndex(ThreeGramsPositionalIndex index, Corpus<Movie> movieCorpus) {
         movieCorpus.getDocumentsAsStream().forEach(document -> {
             int docID = document.docID();
             Movie movie = document.content();
             String[] tokens = normalizeAndTokenize(movie.description(), " ");
-            addTermOccurrenceAndGramsForEachToken(docID, tokens);
+            addTermOccurrenceAndGramsForEachToken(index, docID, tokens);
         });
     }
 
-    private void addTermOccurrenceAndGramsForEachToken(int docID, String[] tokens) {
+    private void addTermOccurrenceAndGramsForEachToken(ThreeGramsPositionalIndex index, int docID, String[] tokens) {
         for (int position = 0; position < tokens.length; position++) {
             String token = tokens[position];
             if (isTokenNotInBlackList(token)) {
@@ -107,7 +105,7 @@ public class MovieIndexBuilder implements IndexBuilder<ThreeGramsPositionalIndex
         return Arrays.stream(blackList).noneMatch(el -> el.equals(token) || token.startsWith("--"));
     }
 
-    private void saveIndexToFile(File file) {
+    private void saveIndexToFile(ThreeGramsPositionalIndex index, File file) {
         System.out.println("Saving new index to file.");
         try (
                 BufferedWriter writer = new BufferedWriter(new FileWriter(file));
