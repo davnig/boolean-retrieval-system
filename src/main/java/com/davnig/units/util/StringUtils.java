@@ -11,6 +11,11 @@ import java.util.regex.Pattern;
  */
 public class StringUtils {
 
+    public static String getWordAt(String source, int position) {
+        String[] tokens = normalizeAndTokenize(source, " ");
+        return tokens[position];
+    }
+
     public static String[] normalizeAndTokenize(String input, String regex) {
         return tokenize(normalize(input), regex);
     }

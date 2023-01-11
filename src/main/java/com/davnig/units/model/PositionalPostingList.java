@@ -2,12 +2,14 @@ package com.davnig.units.model;
 
 import com.davnig.units.model.core.Posting;
 import com.davnig.units.util.ListUtils;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Getter
 public class PositionalPostingList {
 
     private final List<PositionalPosting> postings;
@@ -104,7 +106,7 @@ public class PositionalPostingList {
             PositionalPosting thisPosting = this.postings.get(thisPointer);
             PositionalPosting otherPosting = other.postings.get(otherPointer);
             if (thisPosting.equals(otherPosting)) {
-                intersection.add(new PositionalPosting(thisPosting.getDocID()));
+                intersection.add(new PositionalPosting(thisPosting.getDocID(), thisPosting.getPositions()));
                 thisPointer++;
                 otherPointer++;
             } else if (thisPosting.compareTo(otherPosting) < 0) {
@@ -158,7 +160,7 @@ public class PositionalPostingList {
             PositionalPosting thisPosting = this.postings.get(thisPointer);
             PositionalPosting otherPosting = other.postings.get(otherPointer);
             if (thisPosting.equals(otherPosting)) {
-                union.add(new PositionalPosting(thisPosting.getDocID()));
+                union.add(new PositionalPosting(thisPosting.getDocID(), thisPosting.getPositions()));
                 thisPointer++;
                 otherPointer++;
             } else if (thisPosting.compareTo(otherPosting) < 0) {

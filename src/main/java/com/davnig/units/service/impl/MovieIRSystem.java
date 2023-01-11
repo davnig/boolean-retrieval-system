@@ -2,7 +2,6 @@ package com.davnig.units.service.impl;
 
 import com.davnig.units.model.*;
 import com.davnig.units.model.core.Corpus;
-import com.davnig.units.model.core.Document;
 import com.davnig.units.service.IRSystem;
 import com.davnig.units.util.SetUtils;
 import com.davnig.units.util.StringUtils;
@@ -15,6 +14,25 @@ import static com.davnig.units.util.StringUtils.*;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex> {
+
+    static final private class MovieTermOccurrence {
+        private String movieTitle;
+        private String previousWord;
+        private String word;
+        private String nextWord;
+
+        public MovieTermOccurrence(Movie movie, int position) {
+            movieTitle = movie.title();
+            word = getWordAt(movie.description(), position - 1);
+            word = getWordAt(movie.description(), position);
+            nextWord = getWordAt(movie.description(), position + 1);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s: ...%s %s %s...", movieTitle, previousWord, word, nextWord);
+        }
+    }
 
     private static MovieIRSystem instance;
     private ThreeGramsPositionalIndex index;
@@ -62,7 +80,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         } else {
             postingListResult = answerNOT(query);
         }
-        List<String> movieTitles = getMovieTitlesFromPostingList(postingListResult);
+        List<MovieTermOccurrence> movieTitles = getMovieTitlesFromPostingList(postingListResult);
         long end = System.nanoTime();
         long duration = end - start;
         System.out.printf("Found %d results in %d ms:%n%s%n%n",
@@ -103,7 +121,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         long start = System.nanoTime();
         String[] words = normalizeAndTokenize(query, " ");
         PositionalPostingList postingListResult = searchEngine.findPhrase(words);
-        List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
+        List<MovieTermOccurrence> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
         long end = System.nanoTime();
         long duration = end - start;
         System.out.printf("%nFound %d results in %d ms:%n%s%n%n",
@@ -123,11 +141,11 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         String[] words = searchEngine.searchWordsByThreeGramsMatchingQuery(threeGrams, query);
         System.out.printf("%nWords matched: %n%s%n", Arrays.asList(words));
         PositionalPostingList postingListResult = searchEngine.fetchPostingListsAndComputeUnion(words);
-        List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
+        List<MovieTermOccurrence> result = searchEngine.getMovieTitlesFromPostingList(postingListResult);
         long end = System.nanoTime();
         long duration = end - start;
         System.out.printf("Found %d results in %d ms:%n%s%n%n",
-                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
+                result.size(), NANOSECONDS.toMillis(duration), result);
     }
 
     private String[] searchWordsByThreeGramsMatchingQuery(List<String> threeGrams, String query) {
@@ -196,12 +214,14 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
                 .orElse(new PositionalPostingList());
     }
 
-    private List<String> getMovieTitlesFromPostingList(PositionalPostingList postingList) {
-        return postingList.getAllDocIDs().stream()
-                .map(id -> corpus.getDocumentByID(id))
-                .map(Document::content)
-                .map(Movie::title)
-                .toList();
+    private List<MovieTermOccurrence> getMovieTitlesFromPostingList(PositionalPostingList postingList) {
+        ArrayList<MovieTermOccurrence> resultList = new ArrayList<>();
+        for (PositionalPosting posting : postingList.getPostings()) {
+            Movie movie = corpus.getDocumentByID(posting.getDocID()).content();
+            MovieTermOccurrence result = new MovieTermOccurrence(movie, posting.getPositions().get(0));
+            resultList.add(result);
+        }
+        return resultList;
     }
 
     private boolean isPhraseQuery(String query) {

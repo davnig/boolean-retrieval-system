@@ -70,7 +70,7 @@ public class PositionalPostingListTests {
         postingListB.addOccurrencesInDoc(31, 45, 58);
         PositionalPostingList union = postingListA.union(postingListB);
         assertEquals(5, union.size());
-        assertEquals("4[]25[]26[]30[]31[]", union.toString());
+        assertEquals("4[1,2]25[]26[]30[]31[40,57]", union.toString());
     }
 
 
