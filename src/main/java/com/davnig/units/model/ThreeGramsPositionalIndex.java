@@ -2,6 +2,7 @@ package com.davnig.units.model;
 
 import java.util.*;
 
+import static com.davnig.units.util.StringUtils.addLeadingAndTrailingDollarSymbol;
 import static com.davnig.units.util.StringUtils.extractThreeGrams;
 
 /**
@@ -36,7 +37,8 @@ public class ThreeGramsPositionalIndex extends PositionalIndex {
     }
 
     public void extractAndAddThreeGrams(PositionalTerm term) {
-        extractThreeGrams(term.getWord()).forEach(gram -> addThreeGram(gram, term));
+        String extendedWord = addLeadingAndTrailingDollarSymbol(term.getWord());
+        extractThreeGrams(extendedWord).forEach(gram -> addThreeGram(gram, term));
     }
 
     /**

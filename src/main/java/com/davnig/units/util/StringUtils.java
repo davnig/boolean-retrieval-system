@@ -53,15 +53,19 @@ public class StringUtils {
      * @return a {@link List} of {@link String} representing three-grams
      */
     public static List<String> extractThreeGrams(String input) {
-        String extendedWord = String.format("$%s$", input);
         Pattern pattern = Pattern.compile(".{3}");
-        Matcher matcher = pattern.matcher(extendedWord);
+        Matcher matcher = pattern.matcher(input);
         ArrayList<String> threeGrams = new ArrayList<>();
-        for (int i = 0; i < extendedWord.length(); i++) {
+        for (int i = 0; i < input.length(); i++) {
             if (matcher.find(i)) {
-                threeGrams.add(extendedWord.substring(matcher.start(), matcher.end()));
+                threeGrams.add(input.substring(matcher.start(), matcher.end()));
             }
         }
         return threeGrams;
     }
+
+    public static String addLeadingAndTrailingDollarSymbol(String input) {
+        return String.format("$%s$", input);
+    }
+
 }

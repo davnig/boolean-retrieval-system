@@ -6,12 +6,15 @@ import com.davnig.units.model.PositionalTerm;
 import com.davnig.units.model.ThreeGramsPositionalIndex;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.model.core.Document;
+import com.davnig.units.util.SetUtils;
 import com.davnig.units.util.StringUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.davnig.units.util.StringUtils.addLeadingAndTrailingDollarSymbol;
 import static com.davnig.units.util.StringUtils.normalizeAndTokenize;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class IRSystem {
 
@@ -138,25 +141,31 @@ public class IRSystem {
      */
     private static void answerWildcard(String query) {
         IRSystem searchEngine = getInstance();
+        long start = System.nanoTime();
         List<String> threeGrams = extractThreeGramsFromQuery(query);
         String[] words = searchEngine.searchWordsByThreeGramsMatchingQuery(threeGrams, query);
-        PositionalPostingList postingListResult = searchEngine.fetchPostingListsAndComputeIntersection(words);
+        System.out.printf("%nWords matched: %n%s%n", Arrays.asList(words));
+        PositionalPostingList postingListResult = searchEngine.fetchPostingListsAndComputeUnion(words);
         List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
-        System.out.println(movieTitles);
+        long end = System.nanoTime();
+        long duration = end - start;
+        System.out.printf("Found %d results in %d ms:%n%s%n%n",
+                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
     }
 
     private String[] searchWordsByThreeGramsMatchingQuery(List<String> threeGrams, String query) {
-        return (String[]) threeGrams.stream()
+        return threeGrams.stream()
                 .map(gram -> this.index.findByGram(gram))
+                .reduce(SetUtils::intersect).stream()
                 .flatMap(Collection::stream)
                 .map(PositionalTerm::getWord)
                 .filter(word -> doesWordMatchWildcardQuery(word, query))
-                .toArray();
+                .toArray(String[]::new);
     }
 
     private static List<String> extractThreeGramsFromQuery(String query) {
         List<String> threeGrams = new ArrayList<>();
-        query = String.format("$%s$", query);
+        query = addLeadingAndTrailingDollarSymbol(query);
         String[] tokens = query.split("\\*");
         Arrays.stream(tokens)
                 .map(StringUtils::extractThreeGrams)
