@@ -3,6 +3,8 @@ package com.davnig.units.service;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.model.core.InvertedIndex;
 
+import java.util.List;
+
 public interface IRSystem<T, I extends InvertedIndex> {
 
     /**
@@ -19,7 +21,8 @@ public interface IRSystem<T, I extends InvertedIndex> {
      * documents of type {@link T}.
      *
      * @param query a boolean, phrase or wildcard query
+     * @return
      */
-    void answer(String query);
+    List<String> answer(String query);
 
 }

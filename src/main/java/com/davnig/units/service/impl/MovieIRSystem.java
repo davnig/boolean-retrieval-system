@@ -51,7 +51,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
     }
 
     @Override
-    public void answer(String query) {
+    public List<String> answer(String query) {
         checkIRSystemReadiness();
         long start = System.nanoTime();
         PositionalPostingsList postingListResult;
@@ -67,6 +67,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         long duration = end - start;
         System.out.printf("Found %d results in %d ms:%n%s%n%n",
                 movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
+        return movieTitles;
     }
 
     private void checkIRSystemReadiness() {
