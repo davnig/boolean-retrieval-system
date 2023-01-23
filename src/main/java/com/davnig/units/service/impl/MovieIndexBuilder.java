@@ -2,7 +2,6 @@ package com.davnig.units.service.impl;
 
 import com.davnig.units.model.Movie;
 import com.davnig.units.model.PositionalTerm;
-import com.davnig.units.model.ThreeGramsPositionalIndex;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.serializer.PositionalTermSerializer;
 import com.davnig.units.service.CorpusReader;
@@ -95,7 +94,7 @@ public class MovieIndexBuilder implements IndexBuilder<ThreeGramsPositionalIndex
         try (
                 BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         ) {
-            for (Iterator<PositionalTerm> it = index.positionalIndexIterator(); it.hasNext(); ) {
+            for (Iterator<PositionalTerm> it = index.invertedIndexIterator(); it.hasNext(); ) {
                 PositionalTerm term = it.next();
                 writer.write(serializer.serialize(term));
                 writer.newLine();

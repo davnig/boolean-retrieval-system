@@ -1,8 +1,9 @@
 package com.davnig.units;
 
-import com.davnig.units.model.PositionalIndex;
 import com.davnig.units.model.PositionalPostingsList;
 import com.davnig.units.model.PositionalTerm;
+import com.davnig.units.service.PositionalIndex;
+import com.davnig.units.service.impl.BSTPositionalIndex;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -17,20 +18,20 @@ public class PositionalIndexTests {
 
     @BeforeAll
     static void populateIndex() {
-        index = new PositionalIndex();
-        index.addTermOccurrence("a", 0, 1);
-        index.addTermOccurrence("with", 0, 3);
-        index.addTermOccurrence("zoo", 3, 2);
-        index.addTermOccurrence("stars", 5, 2);
+        index = new BSTPositionalIndex();
+        index.addTermAndOccurrence("a", 0, 1);
+        index.addTermAndOccurrence("with", 0, 3);
+        index.addTermAndOccurrence("zoo", 3, 2);
+        index.addTermAndOccurrence("stars", 5, 2);
     }
 
     @Test
     void given_emptyIndex_when_addTerm_should_createNewEntry() {
         final String testWord = "gatto";
-        PositionalIndex index = new PositionalIndex();
-        index.addTermOccurrence(testWord, 1, 1);
-        assertTrue(index.existsByWord(testWord));
-        Optional<PositionalTerm> queriedTerm = index.findByWord(testWord);
+        BSTPositionalIndex index = new BSTPositionalIndex();
+        index.addTermAndOccurrence(testWord, 1, 1);
+        assertTrue(index.existsTermByWord(testWord));
+        Optional<PositionalTerm> queriedTerm = index.findTermByWord(testWord);
         assertTrue(queriedTerm.isPresent());
         assertEquals(testWord, queriedTerm.get().getWord());
     }
@@ -38,9 +39,9 @@ public class PositionalIndexTests {
     @Test
     void given_indexWithSameWordInDifferentDoc_when_addTerm_should_createNewPosting() {
         final String testWord = "gatto";
-        index.addTermOccurrence(testWord, 1, 1);
-        index.addTermOccurrence(testWord, 2, 1);
-        Optional<PositionalTerm> queriedTerm = index.findByWord(testWord);
+        index.addTermAndOccurrence(testWord, 1, 1);
+        index.addTermAndOccurrence(testWord, 2, 1);
+        Optional<PositionalTerm> queriedTerm = index.findTermByWord(testWord);
         assertTrue(queriedTerm.isPresent());
         assertEquals(2, queriedTerm.get().getPostingsList().size());
     }
@@ -49,9 +50,9 @@ public class PositionalIndexTests {
     void given_indexWithSameWordInSameDocInDifferentPosition_when_addTerm_should_addNewPosition() {
         final int testDocID = 1;
         final String testWord = "gatto";
-        index.addTermOccurrence(testWord, testDocID, 1);
-        index.addTermOccurrence(testWord, testDocID, 3);
-        Optional<PositionalTerm> queriedTerm = index.findByWord(testWord);
+        index.addTermAndOccurrence(testWord, testDocID, 1);
+        index.addTermAndOccurrence(testWord, testDocID, 3);
+        Optional<PositionalTerm> queriedTerm = index.findTermByWord(testWord);
         assertTrue(queriedTerm.isPresent());
         assertEquals(testWord, queriedTerm.get().getWord());
         PositionalPostingsList postingsList = queriedTerm.get().getPostingsList();

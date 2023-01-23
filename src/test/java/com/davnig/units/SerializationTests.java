@@ -1,6 +1,5 @@
 package com.davnig.units;
 
-import com.davnig.units.model.PositionalIndex;
 import com.davnig.units.model.PositionalPosting;
 import com.davnig.units.model.PositionalPostingsList;
 import com.davnig.units.model.PositionalTerm;
@@ -8,6 +7,8 @@ import com.davnig.units.serializer.PositionalPostingSerializer;
 import com.davnig.units.serializer.PositionalPostingsListSerializer;
 import com.davnig.units.serializer.PositionalTermSerializer;
 import com.davnig.units.serializer.Serializer;
+import com.davnig.units.service.PositionalIndex;
+import com.davnig.units.service.impl.BSTPositionalIndex;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -81,7 +82,7 @@ public class SerializationTests {
         Serializer<PositionalTerm> serializer = new PositionalTermSerializer();
         Example<PositionalIndex> indexExample = getIndexExample();
         Reader stringReader = new StringReader(indexExample.string);
-        PositionalIndex result = new PositionalIndex();
+        PositionalIndex result = new BSTPositionalIndex();
         try (
                 BufferedReader reader = new BufferedReader(stringReader)
         ) {
@@ -91,13 +92,13 @@ public class SerializationTests {
         } catch (IOException e) {
             fail();
         }
-        result.positionalIndexIterator().forEachRemaining(System.out::println);
-        assertTrue(result.existsByWord("cat"));
-        assertTrue(result.existsByWord("dog"));
-        PositionalTerm expectedCat = indexExample.object.findByWord("cat").get();
-        PositionalTerm expectedDog = indexExample.object.findByWord("dog").get();
-        PositionalTerm catResult = result.findByWord("cat").get();
-        PositionalTerm dogResult = result.findByWord("dog").get();
+        result.invertedIndexIterator().forEachRemaining(System.out::println);
+        assertTrue(result.existsTermByWord("cat"));
+        assertTrue(result.existsTermByWord("dog"));
+        PositionalTerm expectedCat = indexExample.object.findTermByWord("cat").get();
+        PositionalTerm expectedDog = indexExample.object.findTermByWord("dog").get();
+        PositionalTerm catResult = result.findTermByWord("cat").get();
+        PositionalTerm dogResult = result.findTermByWord("dog").get();
         assertEquals(expectedCat.getPostingsList().size(), catResult.getPostingsList().size());
         assertEquals(expectedDog.getPostingsList().size(), dogResult.getPostingsList().size());
         assertTrue(catResult.getPostingsList().findPostingByDocID(2).isPresent());
@@ -116,13 +117,13 @@ public class SerializationTests {
     }
 
     private PositionalIndex createIndex() {
-        PositionalIndex index = new PositionalIndex();
-        index.addTermOccurrences("cat", 1, 1, 2, 3);
-        index.addTermOccurrences("cat", 2, 1, 2, 3);
-        index.addTermOccurrence("cat", 3, 1);
-        index.addTermOccurrences("dog", 1341, 111, 222, 3333);
-        index.addTermOccurrences("dog", 23567, 1, 24, 35678);
-        index.addTermOccurrence("dog", 3789067, 15346373);
+        PositionalIndex index = new BSTPositionalIndex();
+        index.addTermAndOccurrences("cat", 1, 1, 2, 3);
+        index.addTermAndOccurrences("cat", 2, 1, 2, 3);
+        index.addTermAndOccurrence("cat", 3, 1);
+        index.addTermAndOccurrences("dog", 1341, 111, 222, 3333);
+        index.addTermAndOccurrences("dog", 23567, 1, 24, 35678);
+        index.addTermAndOccurrence("dog", 3789067, 15346373);
         return index;
     }
 

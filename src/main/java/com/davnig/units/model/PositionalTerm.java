@@ -1,20 +1,23 @@
 package com.davnig.units.model;
 
+import com.davnig.units.model.core.Term;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Getter
-@NoArgsConstructor
-public class PositionalTerm implements Comparable<PositionalTerm> {
+public class PositionalTerm extends Term implements Comparable<PositionalTerm> {
 
-    private String word;
-    private PositionalPostingsList postingsList;
+    private final PositionalPostingsList postingsList;
 
     public PositionalTerm(String word) {
-        this.word = word;
+        super(word);
         this.postingsList = new PositionalPostingsList();
+    }
+
+    public PositionalTerm(String word, PositionalPostingsList postingsList) {
+        super(word);
+        this.postingsList = postingsList;
     }
 
     public PositionalTerm(String word, int docID, int position) {
@@ -25,31 +28,6 @@ public class PositionalTerm implements Comparable<PositionalTerm> {
     public PositionalTerm(String word, int docID, int... position) {
         this(word);
         this.postingsList.addOccurrencesInDoc(docID, position);
-    }
-
-    public PositionalTerm(String word, PositionalPostingsList postingsList) {
-        this.word = word;
-        this.postingsList = postingsList;
-    }
-
-    /**
-     * Adds a new occurrence of this term in the associated posting list.
-     *
-     * @param docID    the ID of the document where the term appears
-     * @param position the position of the term inside the document
-     */
-    public void addOccurrenceInDoc(int docID, int position) {
-        postingsList.addOccurrenceInDoc(docID, position);
-    }
-
-    /**
-     * Adds multiple occurrences of this term in the associated posting list.
-     *
-     * @param docID     the ID of the document where the term appears
-     * @param positions the positions of the term inside the document
-     */
-    public void addOccurrencesInDoc(int docID, int[] positions) {
-        postingsList.addOccurrencesInDoc(docID, positions);
     }
 
     @Override

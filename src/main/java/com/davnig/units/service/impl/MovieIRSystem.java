@@ -1,6 +1,9 @@
 package com.davnig.units.service.impl;
 
-import com.davnig.units.model.*;
+import com.davnig.units.model.Movie;
+import com.davnig.units.model.PositionalPosting;
+import com.davnig.units.model.PositionalPostingsList;
+import com.davnig.units.model.PositionalTerm;
 import com.davnig.units.model.core.Corpus;
 import com.davnig.units.model.core.Document;
 import com.davnig.units.service.IRSystem;
@@ -142,7 +145,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
 
     private String[] searchWordsByThreeGramsMatchingQuery(List<String> threeGrams, String query) {
         return threeGrams.stream()
-                .map(gram -> index.findByGram(gram))
+                .map(gram -> index.getTermsByGram(gram))
                 .reduce(SetUtils::intersect).stream()
                 .flatMap(Collection::stream)
                 .map(PositionalTerm::getWord)
@@ -171,7 +174,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
 
     private PositionalPostingsList fetchPostingListsAndComputeIntersection(String... words) {
         return Arrays.stream(words)
-                .map(index::findByWord)
+                .map(index::findTermByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(PositionalTerm::getPostingsList)
@@ -181,7 +184,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
 
     private PositionalPostingsList fetchPostingListsAndComputeUnion(String... words) {
         return Arrays.stream(words)
-                .map(index::findByWord)
+                .map(index::findTermByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(PositionalTerm::getPostingsList)
@@ -200,7 +203,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
 
     private PositionalPostingsList findPhrase(String... words) {
         return Arrays.stream(words)
-                .map(index::findByWord)
+                .map(index::findTermByWord)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(PositionalTerm::getPostingsList)

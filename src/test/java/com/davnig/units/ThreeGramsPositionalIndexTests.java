@@ -1,7 +1,7 @@
 package com.davnig.units;
 
 import com.davnig.units.model.PositionalTerm;
-import com.davnig.units.model.ThreeGramsPositionalIndex;
+import com.davnig.units.service.impl.ThreeGramsPositionalIndex;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,8 +28,8 @@ public class ThreeGramsPositionalIndexTests {
         index.extractAndAddThreeGrams(term);
         String[] grams = new String[]{"$ga", "gat", "att", "tto", "to$"};
         for (String gram : grams) {
-            assertEquals(1, index.findByGram(gram).size());
-            assertTrue(index.findByGram(gram).contains(term));
+            assertEquals(1, index.getTermsByGram(gram).size());
+            assertTrue(index.getTermsByGram(gram).contains(term));
         }
     }
 
