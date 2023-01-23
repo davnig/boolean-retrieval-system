@@ -85,4 +85,3 @@ c*lly
 ## To be fixed
 
 - Non-trailing wildcard queries do not work
-- Query computation time displaying always `0 ms`

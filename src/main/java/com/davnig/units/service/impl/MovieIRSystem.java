@@ -11,8 +11,8 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.davnig.units.util.ComputationTimeCalculator.*;
 import static com.davnig.units.util.StringUtils.*;
-import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex> {
 
@@ -70,7 +70,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
      */
     private void answerBoolean(String query) {
         checkIRSystemReadiness();
-        long start = System.nanoTime();
+        startComputationTimer();
         PositionalPostingsList postingListResult;
         if (isANDQuery(query)) {
             postingListResult = answerAND(query);
@@ -80,10 +80,9 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
             postingListResult = answerNOT(query);
         }
         List<String> movieTitles = getMovieTitlesFromPostingList(postingListResult);
-        long end = System.nanoTime();
-        long duration = end - start;
+        stopComputationTimer();
         System.out.printf("Found %d results in %d ms:%n%s%n%n",
-                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
+                movieTitles.size(), getComputationTimeInMillis(), movieTitles);
     }
 
     /**
@@ -94,14 +93,13 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
      */
     private void answerPhrase(String query) {
         MovieIRSystem searchEngine = getInstance();
-        long start = System.nanoTime();
+        startComputationTimer();
         String[] words = normalizeAndTokenize(query, " ");
         PositionalPostingsList postingListResult = searchEngine.findPhrase(words);
         List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
-        long end = System.nanoTime();
-        long duration = end - start;
+        stopComputationTimer();
         System.out.printf("%nFound %d results in %d ms:%n%s%n%n",
-                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
+                movieTitles.size(), getComputationTimeInMillis(), movieTitles);
     }
 
     /**
@@ -112,16 +110,15 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
      */
     private void answerWildcard(String query) {
         MovieIRSystem searchEngine = getInstance();
-        long start = System.nanoTime();
+        startComputationTimer();
         List<String> threeGrams = extractThreeGramsFromQuery(query);
         String[] words = searchEngine.searchWordsByThreeGramsMatchingQuery(threeGrams, query);
         System.out.printf("%nWords matched: %n%s%n", Arrays.asList(words));
         PositionalPostingsList postingListResult = searchEngine.fetchPostingListsAndComputeUnion(words);
         List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
-        long end = System.nanoTime();
-        long duration = end - start;
+        stopComputationTimer();
         System.out.printf("Found %d results in %d ms:%n%s%n%n",
-                movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
+                movieTitles.size(), getComputationTimeInMillis(), movieTitles);
     }
 
     private PositionalPostingsList answerAND(String query) {
