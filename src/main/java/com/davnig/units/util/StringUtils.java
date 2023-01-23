@@ -74,4 +74,12 @@ public class StringUtils {
         return String.format("$%s$", input);
     }
 
+    public static String addLeadingChar(String input, char symbol) {
+        return String.format("%c%s", symbol, input);
+    }
+
+    public static String addTrailingChar(String input, char symbol) {
+        return String.format("%s%c", input, symbol);
+    }
+
 }

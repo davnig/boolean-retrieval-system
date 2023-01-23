@@ -81,7 +81,3 @@ c*lly
 "rocky balboa"
 "indiana jones"
 ```
-
-## To be fixed
-
-- Non-trailing wildcard queries do not work

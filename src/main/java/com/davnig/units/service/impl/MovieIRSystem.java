@@ -163,6 +163,8 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
 
     private boolean doesWordMatchWildcardQuery(String word, String query) {
         String regex = query.replace("*", ".*");
+        regex = addLeadingChar(regex, '^');
+        regex = addTrailingChar(regex, '$');
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(word).find();
     }
