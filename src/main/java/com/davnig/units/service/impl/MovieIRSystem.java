@@ -40,18 +40,35 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         while (true) {
             System.out.println("Ready to search. Input your query: ");
             String query = scanner.nextLine();
-            if (isPhraseQuery(query)) {
-                answerPhrase(query);
-            } else if (isWildcardQuery(query)) {
-                answerWildcard(query);
-            } else {
-                answer(query);
-            }
+            answer(query);
         }
     }
 
     @Override
-    public List<String> answer(String query) {
+    public void answer(String query) {
+        if (isPhraseQuery(query)) {
+            answerPhrase(query);
+        } else if (isWildcardQuery(query)) {
+            answerWildcard(query);
+        } else {
+            answerBoolean(query);
+        }
+    }
+
+    private void checkIRSystemReadiness() {
+        if (corpus == null || index == null) {
+            System.err.println("Corpus or index not correctly initialized. Did you forget to call start() method?");
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Searches for movie descriptions containing words that match the given boolean query
+     * and prints their title.
+     *
+     * @param query a list of terms separated by whitespaces
+     */
+    private void answerBoolean(String query) {
         checkIRSystemReadiness();
         long start = System.nanoTime();
         PositionalPostingsList postingListResult;
@@ -67,34 +84,10 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         long duration = end - start;
         System.out.printf("Found %d results in %d ms:%n%s%n%n",
                 movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
-        return movieTitles;
-    }
-
-    private void checkIRSystemReadiness() {
-        if (corpus == null || index == null) {
-            System.err.println("Corpus or index not correctly initialized. Did you forget to call start() method?");
-            System.exit(1);
-        }
-    }
-
-    private PositionalPostingsList answerAND(String query) {
-        String[] words = normalizeAndTokenize(query, " and ");
-        return fetchPostingListsAndComputeIntersection(words);
-    }
-
-    private PositionalPostingsList answerOR(String query) {
-        String[] words = normalizeAndTokenize(query, " or ");
-        return fetchPostingListsAndComputeUnion(words);
-    }
-
-    private PositionalPostingsList answerNOT(String query) {
-        query = query.replace("NOT ", "");
-        String[] words = normalizeAndTokenize(query, " ");
-        return fetchIDsOfDocNotContainingAnyOf(words);
     }
 
     /**
-     * Searches for movie descriptions containing the given phrase and prints their titles.
+     * Searches for movie descriptions containing the given phrase and prints their title.
      * Only phrase queries with up to two terms are supported.
      *
      * @param query a list of terms separated by whitespaces
@@ -113,7 +106,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
 
     /**
      * Searches for movie descriptions containing words that match the given wildcard query
-     * and prints their titles.
+     * and prints their title.
      *
      * @param query a single-term wildcard query
      */
@@ -129,6 +122,22 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         long duration = end - start;
         System.out.printf("Found %d results in %d ms:%n%s%n%n",
                 movieTitles.size(), NANOSECONDS.toMillis(duration), movieTitles);
+    }
+
+    private PositionalPostingsList answerAND(String query) {
+        String[] words = normalizeAndTokenize(query, " and ");
+        return fetchPostingListsAndComputeIntersection(words);
+    }
+
+    private PositionalPostingsList answerOR(String query) {
+        String[] words = normalizeAndTokenize(query, " or ");
+        return fetchPostingListsAndComputeUnion(words);
+    }
+
+    private PositionalPostingsList answerNOT(String query) {
+        query = query.replace("NOT ", "");
+        String[] words = normalizeAndTokenize(query, " ");
+        return fetchIDsOfDocNotContainingAnyOf(words);
     }
 
     private String[] searchWordsByThreeGramsMatchingQuery(List<String> threeGrams, String query) {
