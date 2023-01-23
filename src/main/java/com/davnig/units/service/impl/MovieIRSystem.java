@@ -125,7 +125,12 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
     }
 
     private PositionalPostingsList answerAND(String query) {
-        String[] words = normalizeAndTokenize(query, " and ");
+        String[] words;
+        if (containsBooleanOperators(query)) {
+            words = normalizeAndTokenize(query, " and ");
+        } else {
+            words = normalizeAndTokenize(query, " ");
+        }
         return fetchPostingListsAndComputeIntersection(words);
     }
 

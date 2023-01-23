@@ -85,5 +85,4 @@ c*lly
 ## To be fixed
 
 - Non-trailing wildcard queries do not work
-- Boolean queries without boolean operator not working
 - Query computation time displaying always `0 ms`
