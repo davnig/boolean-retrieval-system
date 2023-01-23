@@ -1,6 +1,6 @@
 package com.davnig.units.serializer;
 
-import com.davnig.units.model.PositionalPosting;
+import com.davnig.units.model.PositionalPostings;
 import com.davnig.units.model.PositionalPostingsList;
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class PositionalPostingsListSerializer implements Serializer<PositionalPostingsList> {
 
-    private Serializer<PositionalPosting> postingSerializer;
+    private Serializer<PositionalPostings> postingSerializer;
 
     @Override
     public String serialize(PositionalPostingsList input) {

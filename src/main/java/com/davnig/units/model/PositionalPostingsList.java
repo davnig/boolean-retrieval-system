@@ -1,6 +1,6 @@
 package com.davnig.units.model;
 
-import com.davnig.units.model.core.Posting;
+import com.davnig.units.model.core.Postings;
 import com.davnig.units.util.ListUtils;
 
 import java.util.ArrayList;
@@ -10,23 +10,23 @@ import java.util.stream.Collectors;
 
 public class PositionalPostingsList {
 
-    private final List<PositionalPosting> postings;
+    private final List<PositionalPostings> postings;
 
     public PositionalPostingsList() {
         postings = new ArrayList<>();
     }
 
-    public PositionalPostingsList(List<PositionalPosting> postings) {
+    public PositionalPostingsList(List<PositionalPostings> postings) {
         this.postings = postings;
     }
 
     public List<Integer> getAllDocIDs() {
         return postings.stream()
-                .map(Posting::getDocID)
+                .map(Postings::getDocID)
                 .collect(Collectors.toList());
     }
 
-    public Optional<PositionalPosting> findPostingByDocID(int docID) {
+    public Optional<PositionalPostings> findPostingByDocID(int docID) {
         return postings.stream()
                 .filter(posting -> posting.getDocID() == docID)
                 .findFirst();
@@ -36,14 +36,14 @@ public class PositionalPostingsList {
      * Adds the given posting to this list. This method assumes the absence of any
      * other posting with the same doc ID.
      *
-     * @param posting a {@link PositionalPosting}
+     * @param posting a {@link PositionalPostings}
      */
-    public void addPosting(PositionalPosting posting) {
+    public void addPosting(PositionalPostings posting) {
         postings.add(posting);
     }
 
     /**
-     * Searches for a {@link PositionalPosting} in this list with the given {@code docID}.
+     * Searches for a {@link PositionalPostings} in this list with the given {@code docID}.
      * If not present, creates a new one with the given parameters. If present, add
      * the given {@code position} avoiding duplicates.
      *
@@ -51,9 +51,9 @@ public class PositionalPostingsList {
      * @param position the position to be added
      */
     public void addOccurrenceInDoc(int docID, int position) {
-        Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
+        Optional<PositionalPostings> queriedPosting = findPostingByDocID(docID);
         if (queriedPosting.isEmpty()) {
-            postings.add(new PositionalPosting(docID, position));
+            postings.add(new PositionalPostings(docID, position));
             return;
         }
         queriedPosting.get().addPosition(position);
@@ -67,9 +67,9 @@ public class PositionalPostingsList {
      * @param positions the array of positions to be added
      */
     public void addOccurrencesInDoc(int docID, int... positions) {
-        Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
+        Optional<PositionalPostings> queriedPosting = findPostingByDocID(docID);
         if (queriedPosting.isEmpty()) {
-            postings.add(new PositionalPosting(docID, positions));
+            postings.add(new PositionalPostings(docID, positions));
             return;
         }
         queriedPosting.get().addPositions(positions);
@@ -83,9 +83,9 @@ public class PositionalPostingsList {
      * @param positions the list of positions to be added
      */
     public void addOccurrencesInDoc(int docID, List<Integer> positions) {
-        Optional<PositionalPosting> queriedPosting = findPostingByDocID(docID);
+        Optional<PositionalPostings> queriedPosting = findPostingByDocID(docID);
         if (queriedPosting.isEmpty()) {
-            postings.add(new PositionalPosting(docID, positions));
+            postings.add(new PositionalPostings(docID, positions));
             return;
         }
         queriedPosting.get().addPositions(positions);
@@ -98,13 +98,13 @@ public class PositionalPostingsList {
      * @return a {@link PositionalPostingsList} representing the intersection
      */
     public PositionalPostingsList intersect(PositionalPostingsList other) {
-        List<PositionalPosting> intersection = new ArrayList<>();
+        List<PositionalPostings> intersection = new ArrayList<>();
         for (int thisPointer = 0, otherPointer = 0;
              ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings); ) {
-            PositionalPosting thisPosting = this.postings.get(thisPointer);
-            PositionalPosting otherPosting = other.postings.get(otherPointer);
+            PositionalPostings thisPosting = this.postings.get(thisPointer);
+            PositionalPostings otherPosting = other.postings.get(otherPointer);
             if (thisPosting.equals(otherPosting)) {
-                intersection.add(new PositionalPosting(thisPosting.getDocID()));
+                intersection.add(new PositionalPostings(thisPosting.getDocID()));
                 thisPointer++;
                 otherPointer++;
             } else if (thisPosting.compareTo(otherPosting) < 0) {
@@ -118,20 +118,20 @@ public class PositionalPostingsList {
 
     /**
      * Performs an intersection between this {@link PositionalPostingsList} and the one provided as argument, finding
-     * the {@link PositionalPosting}s in common. Each of them is filled with the positions at which both terms are
+     * the {@link PositionalPostings}s in common. Each of them is filled with the positions at which both terms are
      * adjacent in that document.
      *
      * @param other the second posting list
      * @return a {@link PositionalPostingsList} representing the intersection
      */
     public PositionalPostingsList intersectAndFillWithAdjacentPositions(PositionalPostingsList other) {
-        List<PositionalPosting> intersection = new ArrayList<>();
+        List<PositionalPostings> intersection = new ArrayList<>();
         for (int thisPointer = 0, otherPointer = 0;
              ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings); ) {
-            PositionalPosting thisPosting = this.postings.get(thisPointer);
-            PositionalPosting otherPosting = other.postings.get(otherPointer);
+            PositionalPostings thisPosting = this.postings.get(thisPointer);
+            PositionalPostings otherPosting = other.postings.get(otherPointer);
             if (thisPosting.equals(otherPosting)) {
-                PositionalPosting posting = new PositionalPosting(thisPosting.getDocID());
+                PositionalPostings posting = new PositionalPostings(thisPosting.getDocID());
                 posting.addPositions(thisPosting.findAdjacentPositions(otherPosting));
                 intersection.add(posting);
                 thisPointer++;
@@ -152,20 +152,20 @@ public class PositionalPostingsList {
      * @return a {@link PositionalPostingsList} representing the union
      */
     public PositionalPostingsList union(PositionalPostingsList other) {
-        List<PositionalPosting> union = new ArrayList<>();
+        List<PositionalPostings> union = new ArrayList<>();
         int thisPointer = 0, otherPointer = 0;
         while (ListUtils.hasNext(thisPointer, this.postings) && ListUtils.hasNext(otherPointer, other.postings)) {
-            PositionalPosting thisPosting = this.postings.get(thisPointer);
-            PositionalPosting otherPosting = other.postings.get(otherPointer);
+            PositionalPostings thisPosting = this.postings.get(thisPointer);
+            PositionalPostings otherPosting = other.postings.get(otherPointer);
             if (thisPosting.equals(otherPosting)) {
-                union.add(new PositionalPosting(thisPosting.getDocID()));
+                union.add(new PositionalPostings(thisPosting.getDocID()));
                 thisPointer++;
                 otherPointer++;
             } else if (thisPosting.compareTo(otherPosting) < 0) {
-                union.add(new PositionalPosting(thisPosting.getDocID()));
+                union.add(new PositionalPostings(thisPosting.getDocID()));
                 thisPointer++;
             } else {
-                union.add(new PositionalPosting(otherPosting.getDocID()));
+                union.add(new PositionalPostings(otherPosting.getDocID()));
                 otherPointer++;
             }
         }
@@ -174,9 +174,9 @@ public class PositionalPostingsList {
         return new PositionalPostingsList(union);
     }
 
-    private void unionAllRemaining(List<PositionalPosting> intermediateResult, int pointer, List<PositionalPosting> source) {
+    private void unionAllRemaining(List<PositionalPostings> intermediateResult, int pointer, List<PositionalPostings> source) {
         for (; pointer < source.size(); pointer++) {
-            intermediateResult.add(new PositionalPosting(source.get(pointer).getDocID()));
+            intermediateResult.add(new PositionalPostings(source.get(pointer).getDocID()));
         }
     }
 
@@ -191,7 +191,7 @@ public class PositionalPostingsList {
     @Override
     public String toString() {
         return postings.stream()
-                .map(PositionalPosting::toString)
+                .map(PositionalPostings::toString)
                 .collect(Collectors.joining(""));
     }
 

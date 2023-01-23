@@ -1,7 +1,7 @@
 package com.davnig.units.serializer;
 
 import com.davnig.units.exception.DeserializationException;
-import com.davnig.units.model.PositionalPosting;
+import com.davnig.units.model.PositionalPostings;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,17 +9,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class PositionalPostingSerializer implements Serializer<PositionalPosting> {
+public class PositionalPostingSerializer implements Serializer<PositionalPostings> {
     @Override
-    public String serialize(PositionalPosting input) {
+    public String serialize(PositionalPostings input) {
         return input.toString();
     }
 
     @Override
-    public PositionalPosting deserialize(String input) {
+    public PositionalPostings deserialize(String input) {
         Integer docID = extractDocID(input);
         List<Integer> positions = extractPositions(input);
-        return new PositionalPosting(docID, positions);
+        return new PositionalPostings(docID, positions);
     }
 
     private List<Integer> extractPositions(String input) {

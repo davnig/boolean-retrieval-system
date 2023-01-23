@@ -1,6 +1,6 @@
 package com.davnig.units;
 
-import com.davnig.units.model.PositionalPosting;
+import com.davnig.units.model.PositionalPostings;
 import com.davnig.units.model.PositionalPostingsList;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ public class PositionalPostingsListTests {
         postingsList.addOccurrenceInDoc(1, 1);
         postingsList.addOccurrenceInDoc(1, 2);
         assertEquals(1, postingsList.size());
-        Optional<PositionalPosting> queriedPosting = postingsList.findPostingByDocID(1);
+        Optional<PositionalPostings> queriedPosting = postingsList.findPostingByDocID(1);
         assertTrue(queriedPosting.isPresent());
         assertEquals(2, queriedPosting.get().size());
         List<Integer> positions = queriedPosting.get().getPositions();
@@ -32,7 +32,7 @@ public class PositionalPostingsListTests {
         postingsList.addOccurrencesInDoc(1, 1, 2);
         postingsList.addOccurrenceInDoc(1, 2);
         assertEquals(1, postingsList.size());
-        Optional<PositionalPosting> queriedPosting = postingsList.findPostingByDocID(1);
+        Optional<PositionalPostings> queriedPosting = postingsList.findPostingByDocID(1);
         assertTrue(queriedPosting.isPresent());
         assertEquals(2, queriedPosting.get().size());
         List<Integer> positions = queriedPosting.get().getPositions();

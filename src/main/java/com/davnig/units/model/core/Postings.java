@@ -7,11 +7,11 @@ import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
-public class Posting implements Comparable<Posting> {
+public class Postings implements Comparable<Postings> {
 
     protected int docID;
 
-    public Posting(int docID) {
+    public Postings(int docID) {
         this.docID = docID;
     }
 
@@ -19,8 +19,8 @@ public class Posting implements Comparable<Posting> {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Posting posting)) return false;
-        return docID == posting.docID;
+        if (!(obj instanceof Postings postings)) return false;
+        return docID == postings.docID;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Posting implements Comparable<Posting> {
     }
 
     @Override
-    public int compareTo(Posting other) {
+    public int compareTo(Postings other) {
         return Integer.compare(this.docID, other.docID);
     }
 

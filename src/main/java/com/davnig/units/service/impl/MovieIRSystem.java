@@ -1,7 +1,7 @@
 package com.davnig.units.service.impl;
 
 import com.davnig.units.model.Movie;
-import com.davnig.units.model.PositionalPosting;
+import com.davnig.units.model.PositionalPostings;
 import com.davnig.units.model.PositionalPostingsList;
 import com.davnig.units.model.PositionalTerm;
 import com.davnig.units.model.core.Corpus;
@@ -197,7 +197,7 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
         Set<Integer> allDocIDs = index.getAllDocIDs();
         postingList.getAllDocIDs().forEach(allDocIDs::remove);
         PositionalPostingsList postingsListResult =
-                new PositionalPostingsList(allDocIDs.stream().map(PositionalPosting::new).collect(Collectors.toList()));
+                new PositionalPostingsList(allDocIDs.stream().map(PositionalPostings::new).collect(Collectors.toList()));
         return postingsListResult;
     }
 

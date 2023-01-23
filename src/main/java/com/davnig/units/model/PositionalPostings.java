@@ -1,6 +1,6 @@
 package com.davnig.units.model;
 
-import com.davnig.units.model.core.Posting;
+import com.davnig.units.model.core.Postings;
 import com.davnig.units.util.ListUtils;
 import lombok.Getter;
 
@@ -10,36 +10,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class PositionalPosting extends Posting {
+public class PositionalPostings extends Postings {
 
     private final List<Integer> positions;
 
-    public PositionalPosting() {
+    public PositionalPostings() {
         positions = new ArrayList<>();
     }
 
-    public PositionalPosting(int docID) {
+    public PositionalPostings(int docID) {
         super(docID);
         this.positions = new ArrayList<>();
     }
 
-    public PositionalPosting(int docID, int position) {
+    public PositionalPostings(int docID, int position) {
         this(docID);
         this.positions.add(position);
     }
 
-    public PositionalPosting(int docID, int... positions) {
+    public PositionalPostings(int docID, int... positions) {
         this(docID);
         addPositions(positions);
     }
 
-    public PositionalPosting(int docID, List<Integer> positions) {
+    public PositionalPostings(int docID, List<Integer> positions) {
         this(docID);
         addPositions(positions);
     }
 
     /**
-     * Adds the given position in this {@link PositionalPosting} avoiding duplicates.
+     * Adds the given position in this {@link PositionalPostings} avoiding duplicates.
      *
      * @param position the item to be added
      */
@@ -50,7 +50,7 @@ public class PositionalPosting extends Posting {
     }
 
     /**
-     * Same as {@link PositionalPosting#addPosition(int)} but with  multiple values,
+     * Same as {@link PositionalPostings#addPosition(int)} but with  multiple values,
      * which are assumed to be already ordered.
      *
      * @param positions the list of ordered positions to be added
@@ -60,7 +60,7 @@ public class PositionalPosting extends Posting {
     }
 
     /**
-     * Same as {@link PositionalPosting#addPosition(int)} but with  multiple values,
+     * Same as {@link PositionalPostings#addPosition(int)} but with  multiple values,
      * which are assumed to be already ordered.
      *
      * @param positions the array of ordered positions to be added
@@ -71,7 +71,7 @@ public class PositionalPosting extends Posting {
         addPositions(arrayList);
     }
 
-    public List<Integer> findAdjacentPositions(PositionalPosting other) {
+    public List<Integer> findAdjacentPositions(PositionalPostings other) {
         ArrayList<Integer> result = new ArrayList<>();
         for (int thisPointer = 0, otherPointer = 0;
              ListUtils.hasNext(thisPointer, this.positions) && ListUtils.hasNext(otherPointer, other.positions); ) {
@@ -91,7 +91,7 @@ public class PositionalPosting extends Posting {
     }
 
     /**
-     * Returns the number of positions stored in this {@link PositionalPosting}.
+     * Returns the number of positions stored in this {@link PositionalPostings}.
      *
      * @return number of positions
      */

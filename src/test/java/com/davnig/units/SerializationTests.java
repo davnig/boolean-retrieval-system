@@ -1,6 +1,6 @@
 package com.davnig.units;
 
-import com.davnig.units.model.PositionalPosting;
+import com.davnig.units.model.PositionalPostings;
 import com.davnig.units.model.PositionalPostingsList;
 import com.davnig.units.model.PositionalTerm;
 import com.davnig.units.serializer.PositionalPostingSerializer;
@@ -45,8 +45,8 @@ public class SerializationTests {
 
     @Test
     void given_posting_when_serialize_should_correctlyEncode() {
-        Serializer<PositionalPosting> serializer = new PositionalPostingSerializer();
-        Example<PositionalPosting> example = getPostingExample();
+        Serializer<PositionalPostings> serializer = new PositionalPostingSerializer();
+        Example<PositionalPostings> example = getPostingExample();
         assertEquals(example.string, serializer.serialize(example.object));
     }
 
@@ -62,9 +62,9 @@ public class SerializationTests {
         assertTrue(result.getPostingsList().findPostingByDocID(1).isPresent());
         assertTrue(result.getPostingsList().findPostingByDocID(2).isPresent());
         assertTrue(result.getPostingsList().findPostingByDocID(3).isPresent());
-        PositionalPosting firstPosting = result.getPostingsList().findPostingByDocID(1).get();
-        PositionalPosting secondPosting = result.getPostingsList().findPostingByDocID(2).get();
-        PositionalPosting thirdPosting = result.getPostingsList().findPostingByDocID(3).get();
+        PositionalPostings firstPosting = result.getPostingsList().findPostingByDocID(1).get();
+        PositionalPostings secondPosting = result.getPostingsList().findPostingByDocID(2).get();
+        PositionalPostings thirdPosting = result.getPostingsList().findPostingByDocID(3).get();
         assertEquals(3, firstPosting.size());
         assertEquals(3, secondPosting.size());
         assertEquals(1, thirdPosting.size());
@@ -141,7 +141,7 @@ public class SerializationTests {
         );
     }
 
-    private Example<PositionalPosting> getPostingExample() {
+    private Example<PositionalPostings> getPostingExample() {
         return new Example<>(
                 createPosting(),
                 "1[1,2,3]"
@@ -166,8 +166,8 @@ public class SerializationTests {
         return postingsList;
     }
 
-    private PositionalPosting createPosting() {
-        return new PositionalPosting(1, 1, 2, 3);
+    private PositionalPostings createPosting() {
+        return new PositionalPostings(1, 1, 2, 3);
     }
 
 }
