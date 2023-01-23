@@ -92,11 +92,10 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
      * @param query a list of terms separated by whitespaces
      */
     private void answerPhrase(String query) {
-        MovieIRSystem searchEngine = getInstance();
         startComputationTimer();
         String[] words = normalizeAndTokenize(query, " ");
-        PositionalPostingsList postingListResult = searchEngine.findPhrase(words);
-        List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
+        PositionalPostingsList postingListResult = findPhrase(words);
+        List<String> movieTitles = getMovieTitlesFromPostingList(postingListResult);
         stopComputationTimer();
         System.out.printf("%nFound %d results in %d ms:%n%s%n%n",
                 movieTitles.size(), getComputationTimeInMillis(), movieTitles);
@@ -109,13 +108,12 @@ public class MovieIRSystem implements IRSystem<Movie, ThreeGramsPositionalIndex>
      * @param query a single-term wildcard query
      */
     private void answerWildcard(String query) {
-        MovieIRSystem searchEngine = getInstance();
         startComputationTimer();
         List<String> threeGrams = extractThreeGramsFromQuery(query);
-        String[] words = searchEngine.searchWordsByThreeGramsMatchingQuery(threeGrams, query);
+        String[] words = searchWordsByThreeGramsMatchingQuery(threeGrams, query);
         System.out.printf("%nWords matched: %n%s%n", Arrays.asList(words));
-        PositionalPostingsList postingListResult = searchEngine.fetchPostingListsAndComputeUnion(words);
-        List<String> movieTitles = searchEngine.getMovieTitlesFromPostingList(postingListResult);
+        PositionalPostingsList postingListResult = fetchPostingListsAndComputeUnion(words);
+        List<String> movieTitles = getMovieTitlesFromPostingList(postingListResult);
         stopComputationTimer();
         System.out.printf("Found %d results in %d ms:%n%s%n%n",
                 movieTitles.size(), getComputationTimeInMillis(), movieTitles);
